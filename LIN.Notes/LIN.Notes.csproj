@@ -73,6 +73,8 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\..\AccesoAPI\LIN.Access.Notes\LIN.Access.Notes.csproj" />
+      <ProjectReference Include="..\..\..\Tipos\LIN.Types.Notes\LIN.Types.Notes.csproj" />
       <ProjectReference Include="D:\LIN Services\AccesoAPI\LIN.Access.Auth\LIN.Access.Auth.csproj" />
       <ProjectReference Include="D:\LIN Services\Clientes\LIN\LIN.LocalDataBase\LIN.LocalDataBase.csproj" />
       <ProjectReference Include="D:\LIN Services\Tipos\LIN.Types.Cloud.Identity\LIN.Types.Cloud.Identity.csproj" />

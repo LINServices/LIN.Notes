@@ -17,15 +17,15 @@
 
                 @* Obtener la imagen de perfil. *@
                 @{
-                    string url = $"data:image/png;base64,{Convert.ToBase64String(LIN.Access.Auth.SessionAuth.Instance.Account.Profile)}";
+                    string url = $"data:image/png;base64,{Convert.ToBase64String(LIN.Access.Notes.Session.Instance.Account.Profile)}";
                 }
 
                 @* Perfil. *@
-                @if (LIN.Access.Auth.SessionAuth.Instance.Account.Profile.Length <= 0)
+                @if (LIN.Access.Notes.Session.Instance.Account.Profile.Length <= 0)
                 {
 
                     <div @onclick="CloseSession" class="relative inline-flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-gray-100 dark:bg-zinc-800">
-                        <span class="text-sm text-gray-600 dark:text-gray-300">@(Global.Utilities.Strings.GetInitials(LIN.Access.Auth.SessionAuth.Instance.Account.Name))</span>
+                        <span class="text-sm text-gray-600 dark:text-gray-300">@(Global.Utilities.Strings.GetInitials(LIN.Access.Notes.Session.Instance.Account.Name))</span>
                     </div>
                 }
                 else
@@ -54,6 +54,37 @@
 
         <!--Notas-->
         <div class="grid-cols-2 mt-5 grid gap-3 pb-5 md:grid-cols-4">
+
+
+
+            @if (Notas == null)
+            {
+                <LIN.Notes.Components.Elements.Loader></LIN.Notes.Components.Elements.Loader>
+            }
+            else
+            {
+                
+                @if (Notas.Response != Responses.Success)
+                {
+                    <label>Error</label>
+                }
+                else
+                {
+
+                    @foreach(var e in Notas.Models)
+                    {
+                        <LIN.Notes.Components.Shared.NoteControl Note="e"></LIN.Notes.Components.Shared.NoteControl>
+                    }
+                    
+                }
+
+
+
+
+            }
+
+
+
 
             <div class="bg-yell/50 flex h-60 w-full flex-col rounded-xl px-4 py-5 dark:bg-yell/20">
                 <label class="text-lg font-bold text-zinc-800 dark:text-white">Titulo de la nota</label>

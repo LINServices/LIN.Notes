@@ -70,7 +70,6 @@ public partial class Drawer
                 {
                     Passkey.Status = PassKeyStatus.Success;
                     Passkey.Token = Access.Auth.SessionAuth.Instance.AccountToken;
-                    Home.PassKeyHub.SendStatus(Passkey);
 
                     isOk = true;
                     StateHasChanged();
@@ -106,7 +105,6 @@ public partial class Drawer
             Passkey.Status = PassKeyStatus.Rejected;
             Passkey.Token = "";
 
-            Home.PassKeyHub.SendStatus(Passkey);
         }
         catch
         {

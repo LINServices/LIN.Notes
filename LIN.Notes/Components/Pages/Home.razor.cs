@@ -12,17 +12,8 @@ public partial class Home
 
 
 
-    /// <summary>
-    /// Hub de Passkey.
-    /// </summary>
-    public static PassKeyHub PassKeyHub { get; set; } = BuildHub();
 
-
-
-    /// <summary>
-    /// Lista de intentos.
-    /// </summary>
-    private List<PassKeyModel> Intentos { get; set; } = [];
+ReadAllResponse<Types.Notes.Models.NoteDataModel> Notas { get; set; }
 
 
 
@@ -32,20 +23,10 @@ public partial class Home
     public Home()
     {
         Load();
-        SuscribeEvents();
     }
 
 
 
-
-    /// <summary>
-    /// Suscribir el evento.
-    /// </summary>
-    private async void SuscribeEvents()
-    {
-        await PassKeyHub.Suscribe();
-        PassKeyHub.OnReceiveIntent += OnReceiveIntentIntentAdmin;
-    }
 
 
 
@@ -75,9 +56,9 @@ public partial class Home
     {
 
         // Rellena los datos
-        _ = RefreshCount();
         var dataRes = await RefreshData();
 
+        StateHasChanged();
         // Validación.
         if (!dataRes)
         {
@@ -85,38 +66,11 @@ public partial class Home
             return;
         }
 
-        // Renderizar.
-        Render();
     }
 
 
 
-    /// <summary>
-    /// Renderiza la lista de intentos.
-    /// </summary>
-    private void Render()
-    {
-
-        // Si no hay intentos.
-        if (Intentos.Count == 0)
-            return;
-
-        // Mostrar el primero.
-        ShowOnDrawer(Intentos[0]);
-
-        // Renderizar en la pantalla.
-        if (Intentos.Count > 1)
-        {
-            foreach (var i in Intentos.Skip(1))
-            {
-                // Renderizar en la pantalla.
-            }
-            return;
-        }
-
-    }
-
-
+   
 
     /// <summary>
     /// Muestra un intento en el Drawer.
@@ -140,14 +94,11 @@ public partial class Home
     {
 
         // Items
-        var items = await Access.Auth.Controllers.Intents.ReadAll(LIN.Access.Auth.SessionAuth.Instance.AccountToken);
-
-        // Análisis de respuesta
-        if (items.Response != Responses.Success)
-            return false;
+        var items = await Access.Notes.Controllers.Notes.ReadAll(LIN.Access.Notes.Session.Instance.Token);
 
         // Rellena los items
-        Intentos = [.. items.Models];
+        Notas = items;
+        StateHasChanged();
         return true;
 
     }
@@ -156,22 +107,7 @@ public partial class Home
 
     int count = 0;
 
-    /// <summary>
-    /// Refrescar los datos desde el servicio.
-    /// </summary>
-    private async Task<bool> RefreshCount()
-    {
-
-        // Items
-        var items = await Access.Auth.Controllers.Intents.Count(LIN.Access.Auth.SessionAuth.Instance.AccountToken);
-
-        // Rellena los items
-        count = items.Model;
-        StateHasChanged();
-        return true;
-
-    }
-
+   
 
 
 
@@ -186,25 +122,13 @@ public partial class Home
             LIN.Access.Auth.SessionAuth.CloseSession();
             LIN.LocalDataBase.Data.UserDB db = new();
             await db.DeleteUsers();
-            PassKeyHub.Disconnect();
-            PassKeyHub = null!;
             NavigationManager?.NavigateTo("/");
         });
     }
 
 
 
-    /// <summary>
-    /// Construir el hub.
-    /// </summary>
-    public static PassKeyHub BuildHub()
-    {
-        // Sesión.
-        var session = Access.Auth.SessionAuth.Instance;
-
-        // Crear el Hub.
-        return new(session.Account.Identity.Unique, string.Empty, session.AccountToken, true);
-    }
+ 
 
 
 
@@ -220,7 +144,6 @@ public partial class Home
 
     async void Close()
     {
-        PassKeyHub = null;
         LIN.Access.Auth.SessionAuth.CloseSession();
         LocalDataBase.Data.UserDB database = new();
         await database.DeleteUsers();

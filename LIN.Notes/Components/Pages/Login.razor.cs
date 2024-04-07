@@ -226,7 +226,7 @@ public partial class Login
 
 
         // Iniciar sesión.
-        var (Session, Response) = await LIN.Access.Auth.SessionAuth.LoginWith(User, Password);
+        var (Session, Response) = await LIN.Access.Notes.Session.LoginWith(User, Password);
 
         // Validar respuesta.
         switch (Response)
@@ -373,7 +373,7 @@ public partial class Login
         UpdateSection(1);
 
         // Generar login.
-        var logIn = Access.Auth.SessionAuth.LoginWith(e.Token);
+        var logIn = Access.Notes.Session.LoginWith(e.Token);
 
         // Esperar 4 segundos.
         await Task.Delay(4000);

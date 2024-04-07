@@ -40,6 +40,7 @@ public static class MauiProgram
 
         // Servicios de acceso.
         LIN.Access.Auth.Build.Init();
+        LIN.Access.Notes.Build.Init();
 
         return builder.Build();
     }
