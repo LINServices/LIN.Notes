@@ -84,7 +84,12 @@ public partial class Login
     private PassKeyHub? hub = null;
 
 
-    
+
+    public Login()
+    {
+        MauiProgram.Aa();
+    }
+
 
 
     /// <summary>

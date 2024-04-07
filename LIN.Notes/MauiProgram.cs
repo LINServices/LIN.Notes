@@ -1,4 +1,8 @@
-﻿using Microsoft.Extensions.Logging;
+﻿#if ANDROID
+using Android.Views;
+
+#endif
+using Microsoft.Extensions.Logging;
 using Plugin.Fingerprint;
 using Plugin.Fingerprint.Abstractions;
 
@@ -38,6 +42,34 @@ public static class MauiProgram
         LIN.Access.Auth.Build.Init();
 
         return builder.Build();
+    }
+
+
+
+    public static void Aa()
+    {
+#if ANDROID
+        var currentActivity = Platform.CurrentActivity;
+
+        if (currentActivity == null || currentActivity.Window == null)
+            return;
+
+        var currentTheme = AppInfo.RequestedTheme;
+
+        if (currentTheme == AppTheme.Light)
+        {
+            currentActivity.Window.SetStatusBarColor(new(255, 255, 255));
+            currentActivity.Window.DecorView.SystemUiVisibility = (StatusBarVisibility)SystemUiFlags.LightStatusBar;
+        }
+        else
+        {
+            currentActivity.Window.SetStatusBarColor(new(0, 0, 0));
+            currentActivity.Window.DecorView.SystemUiVisibility = (StatusBarVisibility)SystemUiFlags.LightStatusBar;
+        }
+
+
+        //currentActivity.Window.SetTitleColor(new(0, 0, 0));
+#endif
     }
 
 
