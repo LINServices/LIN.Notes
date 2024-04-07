@@ -17,7 +17,7 @@ public partial class BottomNavigation
     /// Elemento SVG del botón central.
     /// </summary>
     [Parameter]
-    public RenderFragment? ChildContent { get; set; }
+    public Action? OnClick { get; set; }
 
 
 
@@ -41,6 +41,12 @@ public partial class BottomNavigation
         else if (section == 3)
             navigationManager.NavigateTo("/account");
 
+    }
+
+
+    void Go()
+    {
+        OnClick?.Invoke();
     }
 
 

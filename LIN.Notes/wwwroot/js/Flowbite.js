@@ -210,6 +210,13 @@ function I() {
 }
 
 
+
+function BackLast() {
+    history.back();
+}
+
+
+
 function ShopPop(target, trigger) {
 
 

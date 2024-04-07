@@ -5,7 +5,7 @@
 
 @* Pantalla *@
 <div class="UIScroll flex w-full justify-center overflow-y-auto overflow-x-hidden">
-    <div class="flex h-full w-full flex-grow flex-col px-4 pt-9">
+    <div class="flex h-full w-full flex-grow flex-col px-4 pt-9 lg:px-10">
 
         <!--TITULOS-->
         <label class="text-8xl font-bold text-zinc-900 dark:text-white">Mis</label>
@@ -72,38 +72,12 @@
 
                     @foreach(var e in Notas.Models)
                     {
-                        <LIN.Notes.Components.Shared.NoteControl Note="e"></LIN.Notes.Components.Shared.NoteControl>
+                        <LIN.Notes.Components.Shared.NoteControl Note="e" OnClick="Go" />
                     }
                     
                 }
 
-
-
-
             }
-
-
-
-
-            <div class="bg-yell/50 flex h-60 w-full flex-col rounded-xl px-4 py-5 dark:bg-yell/20">
-                <label class="text-lg font-bold text-zinc-800 dark:text-white">Titulo de la nota</label>
-                <label class="mt-2 text-sm font-medium text-zinc-700 dark:text-white">Hola esta es una nota super bonita...</label>
-            </div>
-
-            <div class="bg-salmon/50 flex h-60 w-full flex-col rounded-xl px-4 py-5 dark:bg-salmon/20">
-                <label class="text-lg font-bold text-zinc-800 dark:text-white">Titulo de la nota</label>
-                <label class="mt-2 text-sm font-medium text-zinc-700 dark:text-white">Hola esta es una nota super bonita...</label>
-            </div>
-
-            <div class="bg-glass/50 flex h-60 w-full flex-col rounded-xl px-4 py-5 dark:bg-glass/20">
-                <label class="text-lg font-bold text-zinc-800 dark:text-white">Titulo de la nota</label>
-                <label class="mt-2 text-sm font-medium text-zinc-700 dark:text-white">Hola esta es una nota super bonita...</label>
-            </div>
-
-            <div class="bg-cream-green/50 flex h-60 w-full flex-col rounded-xl px-4 py-5 dark:bg-cream-green/20">
-                <label class="text-lg font-bold text-zinc-800 dark:text-white">Titulo de la nota</label>
-                <label class="mt-2 text-sm font-medium text-zinc-700 dark:text-white">Hola esta es una nota super bonita...</label>
-            </div>
 
         </div>
 
@@ -121,37 +95,7 @@
 
 
 
-<LIN.Notes.Components.Elements.BottomNavigation></LIN.Notes.Components.Elements.BottomNavigation>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<LIN.Notes.Components.Elements.BottomNavigation OnClick="Open"></LIN.Notes.Components.Elements.BottomNavigation>
 
 
 

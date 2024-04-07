@@ -1,4 +1,7 @@
-﻿namespace LIN.Notes.Components.Pages;
+﻿using LIN.Access.Notes;
+using LIN.Types.Notes.Models;
+
+namespace LIN.Notes.Components.Pages;
 
 
 public partial class Home
@@ -13,7 +16,7 @@ public partial class Home
 
 
 
-ReadAllResponse<Types.Notes.Models.NoteDataModel> Notas { get; set; }
+    public static ReadAllResponse<Types.Notes.Models.NoteDataModel>? Notas { get; set; }
 
 
 
@@ -70,7 +73,7 @@ ReadAllResponse<Types.Notes.Models.NoteDataModel> Notas { get; set; }
 
 
 
-   
+
 
     /// <summary>
     /// Muestra un intento en el Drawer.
@@ -107,7 +110,7 @@ ReadAllResponse<Types.Notes.Models.NoteDataModel> Notas { get; set; }
 
     int count = 0;
 
-   
+
 
 
 
@@ -128,7 +131,7 @@ ReadAllResponse<Types.Notes.Models.NoteDataModel> Notas { get; set; }
 
 
 
- 
+
 
 
 
@@ -144,9 +147,47 @@ ReadAllResponse<Types.Notes.Models.NoteDataModel> Notas { get; set; }
 
     async void Close()
     {
+        Notas = null;
         LIN.Access.Auth.SessionAuth.CloseSession();
         LocalDataBase.Data.UserDB database = new();
         await database.DeleteUsers();
     }
+
+
+
+    void Go(NoteDataModel note)
+    {
+        var url = NavigationManager.BaseUri + "note";
+
+        url = Global.Utilities.Network.Web.AddParameters(url, new Dictionary<string, string>()
+        { 
+            {"Id", note.Id.ToString() }
+        });
+
+        NavigationManager.NavigateTo(url);
+
+    }
+
+
+    async void Open()
+    {
+
+        var x = await LIN.Access.Notes.Controllers.Notes.Create(new NoteDataModel()
+        {
+            Color = 0
+        }, Session.Instance.Token);
+
+
+        if (x.Response != Responses.Success)
+            return;
+
+        var n = new NoteDataModel() { Id = x.LastID };
+
+        Notas.Models.Add(n);
+
+
+        Go(n);
+    }
+
 
 }
