@@ -1,0 +1,200 @@
+﻿@page "/"
+
+@* Propiedades *@
+<PageTitle>Iniciar Sesión</PageTitle>
+
+
+@* Pantalla *@
+<div class="grid-cols-1 px-[-20px] grid max-h-dvh min-h-dvh w-full dl:grid-cols-2">
+
+
+    @* Contenido *@
+    <div class="flex w-full items-center justify-center p-3">
+
+        @* Secciones *@
+        <div class="align-items-center flex w-max">
+
+            @* Entradas *@
+            @if (Section == 0)
+            {
+                @*Contenedor*@
+                <div class="z-10 flex-1 relative flex flex-col px-4 py-10 sm:justify-center md:flex-none md:px-28">
+                    <div class="mx-auto w-full max-w-md sm:px-4 md:w-96 md:max-w-sm md:px-0">
+
+                        @* Header *@
+                        <div class="flex flex-col">
+
+                            @* Nombre *@
+                            <div class="flex flex-row items-center">
+
+                                <img class="self-center" src="./favicon.png" style="height:30px; width: 30px" />
+                                <label class="ml-3 self-center text-xl font-bold dark:text-gray-200">
+                                    LIN
+                                    <span class="bg-gradient-to-r from-current-500 to-current-500 bg-clip-text text-transparent">
+                                        Notes
+                                    </span>
+
+                                </label>
+                            </div>
+
+                            @*Mensaje de cuenta*@
+                            <div class="mt-10">
+
+                                @* Si es con llave *@
+                                @if (IsWithKey)
+                                {
+                                    <h2 class="text-lg font-bold text-gray-900 dark:text-white">
+                                        Iniciar sesión con Passkey
+                                    </h2>
+                                }
+
+                                @* Si es con contraseña *@
+                                else
+                                {
+                                    <h2 class="text-lg font-bold text-gray-900 dark:text-white">
+                                        Iniciar sesión en tu cuenta
+                                    </h2>
+                                }
+
+                                <p class="mt-2 text-sm text-gray-700 dark:text-gray-300">
+                                    No tienes una cuenta?@* *@ <a style="text-decoration: none !important;"
+                                                                  class="font-medium text-current-500 hover:text-current-800"
+                                                                  href="/register">Regístrate</a> @* *@para iniciar a disfrutar
+                                </p>
+                            </div>
+
+                        </div>
+
+                        @* Cuerpo *@
+                        <div class="grid-cols-1 mt-6 grid gap-4">
+
+
+                            @*Usuario*@
+                            <div class="">
+                                <label for="email" class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                    Usuario
+                                </label>
+                                <input @onkeypress="HideError" @bind="User" type="text" autocomplete="off" required=""
+                                       class="block w-full appearance-none rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-1 focus:border-current-500 focus:bg-white focus:outline-none focus:ring-current-500 dark:bg-zinc-900 dark:text-zinc-200 dark:border-zinc-700 sm:text-sm dark:focus:bg-zinc-900">
+                            </div>
+
+
+
+
+                            @* Contraseña *@
+                            @if (!IsWithKey)
+                            {
+                                @*Contraseña*@
+                                <div class="">
+                                    <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">Contraseña</label>
+                                    <input @onkeypress="HideError"
+                                           @bind="                                                Password" type="password"
+                                           autocomplete="off"
+                                           class="block w-full appearance-none rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-1 focus:border-current-500 focus:bg-white focus:outline-none focus:ring-current-500 dark:bg-zinc-900 dark:text-zinc-200 dark:border-zinc-700 sm:text-sm dark:focus:bg-zinc-900">
+                                </div>
+                            }
+
+
+                            @* Mensaje de error *@
+                            <center class="@(ErrorVisible ? "visible":"hidden")" style="margin-bottom: -10px;">
+                                <label class="text-sm font-bold text-red-500">@ErrorMessage</label>
+                            </center>
+
+
+                            @* Botón *@
+                            <div class="mt-1 flex flex-row">
+
+                                @* Botón iniciar *@
+                                <button @onclick="Start"
+                                        class="group inline-flex w-full items-center justify-center rounded-full bg-current-500 px-4 py-2 text-sm font-bold text-white hover:text-slate-100 hover:bg-current-800 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current-500 active:bg-current-800 active:text-current-100 dark:bg-current-600">
+                                    <span>Iniciar <span aria-hidden="true">→</span></span>
+                                </button>
+
+
+                                @* Botón de iniciar con llave *@
+                                <button @onclick="GotoLoginKey" type="button"
+                                        class="ml-2 flex w-20 items-center justify-center rounded-full bg-current-500 p-2.5 text-center text-sm font-medium text-white hover:bg-current-800 focus:ring-4 focus:outline-none focus:ring-current-300 dark:bg-current-600">
+
+                                    @if (IsWithKey)
+                                    {
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                             class="bi bi-x-lg" viewBox="0 0 16 16">
+                                            <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
+                                        </svg>
+                                    }
+                                    else
+                                    {
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
+                                             class="" viewBox="0 0 16 16">
+                                            <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm7 11a1 1 0 1 0-2 0 1 1 0 0 0 2 0z" />
+                                        </svg>
+                                    }
+
+                                </button>
+
+
+                            </div>
+
+                            @* Olvide mi contraseña *@
+                            <div class="flex flex-row items-end justify-end">
+                                <label @onclick="GoToForget" class="text-sm text-current-500 hover:text-current-800">
+                                    Olvide mi
+                                    contraseña
+                                </label>
+                            </div>
+
+
+                        </div>
+
+                    </div>
+                </div>
+
+            }
+
+            @* Correcto *@
+            else if (Section == 1)
+            {
+                <div class="flex items-center justify-center">
+                    <LIN.Notes.Components.Elements.Success />
+                </div>
+            }
+
+            @* Fallido *@
+            else if (Section == 2)
+            {
+                <div class="flex flex-col items-center justify-center">
+                    <Fai />
+                    <label class="text-red-500">@ErrorMessage</label>
+                </div>
+            }
+
+            @* Cargando *@
+            else
+            {
+
+                <div class="flex flex-col items-center justify-center">
+                    <LIN.Notes.Components.Elements.Loader />
+                    <h5 class="mt-2 text-sm font-bold text-gray-600 dark:text-gray-300">@LogMessage</h5>
+                    @if (ShowButtonCancel)
+                    {
+                        <label @onclick="CancelPasskey" class="text-sm hover:text-current-500 dark:text-gray-400">Cancelar</label>
+                    }
+                </div>
+
+            }
+
+        </div>
+
+    </div>
+
+
+    @* Imagen *@
+    <div class="hidden rounded-lg p-3 dl:block dl:w-full">
+
+        <div class="bg-image h-full w-full rounded-lg">
+        </div>
+
+    </div>
+
+
+</div>

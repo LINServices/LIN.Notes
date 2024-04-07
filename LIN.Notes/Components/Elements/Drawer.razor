@@ -1,0 +1,48 @@
+﻿@inject IJSRuntime JS
+
+<!-- drawer component -->
+<div id="drawer-bottom-example" class="fixed bottom-0 left-0 right-0 z-40 w-full p-4 overflow-y-auto transition-transform bg-white dark:bg-black translate-y-full rounded-t-xl" tabindex="-1" aria-labelledby="drawer-bottom-label">
+  
+    <div class="flex flex-col items-center justify-center mt-5">
+      
+
+
+        @if (isOk)
+        {
+            <div class="flex items-center justify-center">
+                <Success />
+            </div>
+            
+        }
+        else
+        {
+
+        <img class="h-10 w-10" src="./img/key.png" />
+        <label class="text-xl mt-2 font-bold dark:text-white">Iniciar con Passkey</label>
+        <label class="text-base mt-1 dark:text-gray-200">Esta llave sera usada en <span class="font-bold">Allo</span></label>
+
+
+            <div class="flex rounded-xl bg-zinc-200 mt-4 w-full p-4 items-center dark:bg-[#2C2C2C]">
+            <img class="h-7 w-7" src="./favicon.png" />
+
+            <div class="flex flex-col ml-3">
+                <label class="text-sm font-bold dark:text-white">@LIN.Access.Auth.SessionAuth.Instance.Account.Name</label>
+                    <label class="text-xs -mt-0.5 dark:text-gray-200">@@@LIN.Access.Auth.SessionAuth.Instance.Account.Identity.Unique</label>
+            </div>
+
+        </div>
+
+
+        <div class="flex w-full gap-2 mt-6">
+                <button @onclick="OnClose" id="btn-close-panel" class="flex-1 bg-gray-200 hover:bg-gray-400 text-gray-950 font-bold py-2 px-4 dark:bg-[#2C2C2C] dark:hover:bg-[#212121] dark:text-gray-200 rounded-xl">
+                Cancelar
+            </button>
+            <button @onclick="OnSuccess" class="flex-1 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-xl">
+                Aceptar
+            </button>
+        </div>
+
+        }
+    </div>
+
+</div>
