@@ -138,22 +138,7 @@ public partial class Home
 
     async void Open()
     {
-
-        var x = await LIN.Access.Notes.Controllers.Notes.Create(new NoteDataModel()
-        {
-            Color = 0
-        }, Session.Instance.Token);
-
-
-        if (x.Response != Responses.Success)
-            return;
-
-        var n = new NoteDataModel() { Id = x.LastID };
-
-        Notas.Models.Add(n);
-
-
-        Go(n);
+        Go(new());
     }
 
 

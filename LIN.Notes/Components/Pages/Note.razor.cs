@@ -1,19 +1,51 @@
-﻿namespace LIN.Notes.Components.Pages;
+﻿using LIN.Access.Notes;
+
+namespace LIN.Notes.Components.Pages;
 
 
-public partial class Note 
+public partial class Note
 {
 
 
+    /// <summary>
+    /// Id de la nota.
+    /// </summary>
     [Parameter]
     [SupplyParameterFromQuery]
     public int Id { get; set; }
 
 
+
+    /// <summary>
+    /// Modelo de la nota.
+    /// </summary>
     Types.Notes.Models.NoteDataModel? NoteDataModel { get; set; }
 
 
 
+    /// <summary>
+    /// Titulo.
+    /// </summary>
+    string Tittle
+    {
+        get => (string.IsNullOrWhiteSpace(NoteDataModel?.Tittle)) ? "Sin Titulo" : NoteDataModel?.Tittle ?? "";
+        set
+        {
+            if (NoteDataModel == null)
+                return;
+
+            NoteDataModel.Tittle = (string.IsNullOrWhiteSpace(value)) ? "Sin titulo" : value;
+
+            if (!IsCreated)
+                Create();
+        }
+    }
+
+
+
+    /// <summary>
+    /// Contenido.
+    /// </summary>
     string Content
     {
         get => NoteDataModel?.Content ?? ""; set
@@ -22,35 +54,31 @@ public partial class Note
                 return;
 
             NoteDataModel.Content = value;
-
+            if (!IsCreated)
+                Create();
         }
     }
 
+
+
+    bool IsCreated { get; set; }
 
     protected override void OnParametersSet()
     {
 
-
-
+        // Obtener la nota.
         var note = Home.Notas?.Models?.Where(t => t.Id == Id).FirstOrDefault();
 
+        // Si la nota no existe.
+        NoteDataModel = note ?? new();
 
-
-        if (note == null)
-        {
-            NavigationManager.NavigateTo("/home");
-            return;
-        }
-
-
+        // Color.
         MainPage.OnColor = SetColor;
-
-        NoteDataModel = note;
-
-
 
         base.OnParametersSet();
     }
+
+
 
     void Back()
     {
@@ -68,10 +96,10 @@ public partial class Note
 
 
 
-    string GetClass()
+     string GetClass()
     {
 
-        
+       
 
         switch (NoteDataModel?.Color)
         {
@@ -101,9 +129,72 @@ public partial class Note
         if (NoteDataModel == null)
             return;
 
+
+        if (NoteDataModel.Id <= 0)
+            return;
+
         await LIN.Access.Notes.Controllers.Notes.Update(NoteDataModel.Id, NoteDataModel.Tittle, value, NoteDataModel.Color, LIN.Access.Notes.Session.Instance.Token);
 
     }
 
+
+
+    async void InputTittle(Microsoft.AspNetCore.Components.ChangeEventArgs e)
+    {
+
+        string value = e.Value?.ToString() ?? "";
+
+        if (NoteDataModel == null)
+            return;
+
+        if (NoteDataModel.Id <= 0)
+            return;
+
+        await LIN.Access.Notes.Controllers.Notes.Update(NoteDataModel.Id, value, NoteDataModel.Content, NoteDataModel.Color, LIN.Access.Notes.Session.Instance.Token);
+
+    }
+
+
+
+
+    async void Create()
+    {
+
+        if (IsCreated || NoteDataModel?.Id != 0)
+            return;
+
+        IsCreated = true;
+        var response = await LIN.Access.Notes.Controllers.Notes.Create(new Types.Notes.Models.NoteDataModel()
+        {
+            Content = NoteDataModel.Content,
+            Tittle = NoteDataModel.Tittle
+        }, LIN.Access.Notes.Session.Instance.Token);
+
+
+        NoteDataModel.Id = response.LastID;
+
+        Home.Notas?.Models.Add(NoteDataModel);
+
+
+
+    }
+
+
+
+    async void SetNewColor(int color)
+    {
+
+        if (NoteDataModel == null)
+            return;
+
+        NoteDataModel.Color = color;
+
+        if (NoteDataModel.Id > 0)
+            await LIN.Access.Notes.Controllers.Notes.Update(NoteDataModel.Id, color, Session.Instance.Token);
+
+        StateHasChanged();
+
+
+    }
 
 }
