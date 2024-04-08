@@ -9,18 +9,18 @@
    
     <div class="flex h-full w-full flex-grow flex-col px-4 pt-9 lg:px-10">
 
-        <button @onclick="Back" type="button" class="flex w-max items-center justify-center gap-x-2 rounded-lg border bg-white px-5 py-2 text-sm text-gray-700 transition-colors duration-200 hover:bg-gray-100 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-700 sm:w-auto dark:hover:bg-gray-800">
-    <svg class="h-5 w-5 rtl:rotate-180" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18" />
-    </svg>
-    <span>Go back</span>
-</button>
+        <div class="mb-3">
+            <button @onclick="Back" type="button" class="bg-white/40 flex w-max items-center justify-center rounded-full p-2 text-sm text-gray-700 transition-colors duration-200 hover:bg-gray-100 dark:bg-zinc-500/30 dark:text-gray-200 dark:border-gray-700 sm:w-auto dark:hover:bg-gray-800">
+                <svg class="h-6 w-6 rtl:rotate-180" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18" />
+                </svg>
+            </button>
+        </div>
+       
 
-        <!--TITULOS-->
         <label class="text-7xl font-medium text-zinc-800 dark:text-zinc-300">@NoteDataModel?.Tittle</label>
 
-
-        <textarea @oninput="Input" @bind="Content" id="comment" rows="4" class="border-0 w-full bg-transparent px-0 text-sm text-gray-900 outline-none focus:ring-0 dark:text-white dark:placeholder-gray-400" placeholder="Write a comment..." required />
+        <textarea @oninput="Input" @bind="Content" id="comment" rows="4" class="border-0 mt-3 h-full w-full resize-none bg-transparent px-0 text-sm text-gray-900 placeholder-zinc-800 outline-none focus:ring-0 dark:text-white dark:placeholder-gray-400" placeholder="Ecribir tu nota..." required />
         
     </div>
 

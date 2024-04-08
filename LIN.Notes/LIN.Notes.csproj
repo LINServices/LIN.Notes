@@ -43,7 +43,7 @@
 
     <ItemGroup>
         <!-- Splash Screen -->
-        <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#000" BaseSize="128,128" TintColor="#eab308" />
+        <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#eab308" BaseSize="128,128" TintColor="white" />
 
         <!-- Images -->
         <MauiImage Include="Resources\Images\*" />

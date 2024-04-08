@@ -60,11 +60,43 @@ public static class MauiProgram
         if (currentTheme == AppTheme.Light)
         {
             currentActivity.Window.SetStatusBarColor(new(255, 255, 255));
+            currentActivity.Window.SetNavigationBarColor(new(255, 255, 255));
             currentActivity.Window.DecorView.SystemUiVisibility = (StatusBarVisibility)SystemUiFlags.LightStatusBar;
         }
         else
         {
             currentActivity.Window.SetStatusBarColor(new(0, 0, 0));
+            currentActivity.Window.SetNavigationBarColor(new(0, 0, 0));
+            currentActivity.Window.DecorView.SystemUiVisibility = (StatusBarVisibility)SystemUiFlags.LightStatusBar;
+        }
+
+
+        //currentActivity.Window.SetTitleColor(new(0, 0, 0));
+#endif
+    }
+
+
+    public static void Set(int[] light, int[] dark)
+    {
+#if ANDROID
+
+        var currentActivity = Platform.CurrentActivity;
+
+        if (currentActivity == null || currentActivity.Window == null)
+            return;
+
+        var currentTheme = AppInfo.RequestedTheme;
+
+        if (currentTheme == AppTheme.Light)
+        {
+            currentActivity.Window.SetStatusBarColor(new(light[0], light[1], light[2]));
+            currentActivity.Window.SetNavigationBarColor(new(light[0], light[1], light[2]));
+            currentActivity.Window.DecorView.SystemUiVisibility = (StatusBarVisibility)SystemUiFlags.LightStatusBar;
+        }
+        else
+        {
+            currentActivity.Window.SetStatusBarColor(new(dark[0], dark[1], dark[2]));
+            currentActivity.Window.SetNavigationBarColor(new(dark[0], dark[1], dark[2]));
             currentActivity.Window.DecorView.SystemUiVisibility = (StatusBarVisibility)SystemUiFlags.LightStatusBar;
         }
 
