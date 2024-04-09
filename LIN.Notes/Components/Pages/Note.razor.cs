@@ -96,10 +96,10 @@ public partial class Note
 
 
 
-     string GetClass()
+    string GetClass()
     {
 
-       
+
 
         switch (NoteDataModel?.Color)
         {
@@ -133,7 +133,18 @@ public partial class Note
         if (NoteDataModel.Id <= 0)
             return;
 
-        await LIN.Access.Notes.Controllers.Notes.Update(NoteDataModel.Id, NoteDataModel.Tittle, value, NoteDataModel.Color, LIN.Access.Notes.Session.Instance.Token);
+        var response = await LIN.Access.Notes.Controllers.Notes.Update(NoteDataModel.Id, NoteDataModel.Tittle, value, NoteDataModel.Color, LIN.Access.Notes.Session.Instance.Token);
+
+        var db = new LocalDataBase.Data.NoteDB();
+
+        _ = db.Update(new LocalDataBase.Models.Note()
+        {
+            Color = NoteDataModel.Color,
+            Content = value,
+            Id = NoteDataModel.Id,
+            Tittle = NoteDataModel.Tittle,
+            IsConfirmed = response.Response == Responses.Success,
+        });
 
     }
 
@@ -150,7 +161,18 @@ public partial class Note
         if (NoteDataModel.Id <= 0)
             return;
 
-        await LIN.Access.Notes.Controllers.Notes.Update(NoteDataModel.Id, value, NoteDataModel.Content, NoteDataModel.Color, LIN.Access.Notes.Session.Instance.Token);
+        var response = await LIN.Access.Notes.Controllers.Notes.Update(NoteDataModel.Id, value, NoteDataModel.Content, NoteDataModel.Color, LIN.Access.Notes.Session.Instance.Token);
+
+        var db = new LocalDataBase.Data.NoteDB();
+
+        _ = db.Update(new LocalDataBase.Models.Note()
+        {
+            Color = NoteDataModel.Color,
+            Content = NoteDataModel.Content,
+            Id = NoteDataModel.Id,
+            Tittle = value,
+            IsConfirmed = response.Response == Responses.Success,
+        });
 
     }
 
@@ -194,6 +216,30 @@ public partial class Note
 
         StateHasChanged();
 
+
+    }
+
+
+    async void Delete()
+    {
+        if (NoteDataModel == null || NoteDataModel.Id <= 0)
+            return;
+
+        var response = await LIN.Access.Notes.Controllers.Notes.Delete(NoteDataModel.Id, Session.Instance.Token);
+
+
+        if (response.Response == Responses.Success)
+        {
+            Home.Notas.Models.RemoveAll(t => t.Id == NoteDataModel.Id);
+            NavigationManager.NavigateTo("Home");
+        }
+
+
+        var db = new LocalDataBase.Data.NoteDB();
+
+        _ = db.DeleteOne(NoteDataModel.Id);
+
+        StateHasChanged();
 
     }
 

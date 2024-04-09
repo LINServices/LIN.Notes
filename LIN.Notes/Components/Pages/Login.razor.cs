@@ -1,7 +1,4 @@
-﻿using Global.Http;
-using LIN.Notes.Components.Layout;
-
-namespace LIN.Notes.Components.Pages;
+﻿namespace LIN.Notes.Components.Pages;
 
 
 public partial class Login
@@ -97,6 +94,18 @@ public partial class Login
     /// </summary>
     protected override async Task OnInitializedAsync()
     {
+        LocalDataBase.Data.UserDB database = new();
+
+        NetworkAccess accessType = Connectivity.Current.NetworkAccess;
+
+        if (accessType != NetworkAccess.Internet && (await database.GetDefault()) != null)
+        {
+
+            var us = await database.GetDefault();
+            LIN.Access.Notes.Session.GenerateLocal(us?.UserName);
+            NavigationManager?.NavigateTo("/home");
+            return;
+        }
 
 
         if (Access.Auth.SessionAuth.IsOpen)
@@ -105,12 +114,12 @@ public partial class Login
             return;
         }
 
-      
+
 
         _ = base.OnInitializedAsync();
 
 
-        LocalDataBase.Data.UserDB database = new();
+
 
         // Usuario
         var user = await database.GetDefault();
@@ -236,7 +245,7 @@ public partial class Login
             case Responses.Success:
 
                 // Iniciar servicios de tiempo real.
-               // Services.Realtime.Start();
+                // Services.Realtime.Start();
 
                 // Obtener local db.
                 LocalDataBase.Data.UserDB database = new();

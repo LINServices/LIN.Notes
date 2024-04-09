@@ -1,6 +1,4 @@
-﻿
-using LIN.Access.Notes;
-using LIN.Types.Notes.Models;
+﻿using LIN.Types.Notes.Models;
 
 namespace LIN.Notes.Components.Pages;
 
@@ -64,7 +62,40 @@ public partial class Home
             return;
 
         // Items
-        var items = await Access.Notes.Controllers.Notes.ReadAll(LIN.Access.Notes.Session.Instance.Token);
+        NetworkAccess accessType = Connectivity.Current.NetworkAccess;
+
+        ReadAllResponse<NoteDataModel>? items = null;
+        if (accessType == NetworkAccess.Internet)
+        {
+
+
+            items = await Access.Notes.Controllers.Notes.ReadAll(LIN.Access.Notes.Session.Instance.Token);
+
+            if (items.Response == Responses.Success)
+            {
+
+                CreateAndUpdate(items.Models);
+
+
+            }
+
+        }
+
+        else
+            items = new()
+            {
+                Response = Responses.Success,
+                Models = (await new LocalDataBase.Data.NoteDB().Get()).Select(t => new NoteDataModel()
+                {
+                    Color = t.Color,
+                    Content = t.Content,
+                    Id = t.Id,
+                    Tittle = t.Tittle
+                }).ToList()
+            };
+
+
+
 
         // Rellena los items
         Notas = items;
@@ -141,5 +172,44 @@ public partial class Home
         Go(new());
     }
 
+
+
+
+    async void CreateAndUpdate(List<NoteDataModel> notas)
+    {
+        // Guardar.
+        LIN.LocalDataBase.Data.NoteDB noteDB = new();
+
+
+
+        var untracks = await noteDB.GetUntrack();
+
+
+        foreach (var note in untracks)
+        {
+            _ = LIN.Access.Notes.Controllers.Notes.Update(note.Id, note.Tittle, note.Content, note.Color, LIN.Access.Notes.Session.Instance.Token);
+            var nt = notas.FirstOrDefault(t => t.Id == note.Id);
+
+            if (nt != null)
+            {
+                nt.Tittle = note.Tittle;
+                nt.Content = note.Content;
+                nt.Color = note.Color;
+            }
+        }
+
+
+        // Save.
+        await noteDB.Save(notas.Select(t => new LocalDataBase.Models.Note
+        {
+            Color = t.Color,
+            Content = t.Content,
+            Id = t.Id,
+            Tittle = t.Tittle,
+            IsConfirmed = true
+        }).ToList());
+
+        _ = this.InvokeAsync(StateHasChanged);
+    }
 
 }
