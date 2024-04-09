@@ -1,10 +1,19 @@
-﻿using LIN.Types.Notes.Models;
-
-namespace LIN.Notes.Components.Pages;
+﻿namespace LIN.Notes.Components.Pages;
 
 
 public partial class Home
 {
+
+
+
+
+
+
+
+
+
+
+
 
 
     public static ReadAllResponse<Types.Notes.Models.NoteDataModel>? Notas { get; set; }

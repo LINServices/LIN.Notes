@@ -1,6 +1,4 @@
-﻿using LIN.Access.Notes;
-
-namespace LIN.Notes.Components.Pages;
+﻿namespace LIN.Notes.Components.Pages;
 
 
 public partial class Note
@@ -61,7 +59,15 @@ public partial class Note
 
 
 
-    bool IsCreated { get; set; }
+    /// <summary>
+    /// La nota esta creada.
+    /// </summary>
+    private bool IsCreated { get; set; }
+
+
+
+
+
 
     protected override void OnParametersSet()
     {
