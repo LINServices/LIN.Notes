@@ -19,6 +19,39 @@ public partial class Home
         Load();
         MainPage.OnColor = MauiProgram.Aa;
         MauiProgram.Aa();
+
+        Microsoft.Maui.Networking.Connectivity.ConnectivityChanged += Connectivity;
+    }
+
+    private async void Connectivity(object? sender, ConnectivityChangedEventArgs e)
+    {
+
+        if (e.NetworkAccess == NetworkAccess.Internet)
+        {
+
+
+            if (LIN.Access.Notes.Session.Instance.IsLocal)
+            {
+
+                LocalDataBase.Data.UserDB database = new();
+
+
+                // Usuario
+                var user = await database.GetDefault();
+
+                Start(user?.UserU, user?.Password);
+            }
+
+            _ = InvokeAsync(()=>RefreshData(true));
+
+        }
+        else
+        {
+            LIN.Access.Notes.Session.Instance.IsLocal = true;
+        }
+
+        _ = InvokeAsync(StateHasChanged);
+
     }
 
 
@@ -55,14 +88,15 @@ public partial class Home
     /// <summary>
     /// Refrescar los datos desde el servicio.
     /// </summary>
-    private async Task RefreshData()
+    private async Task RefreshData(bool force = false)
     {
 
-        if (Notas != null)
+        if (!force && Notas != null)
             return;
-
+        
         // Items
-        NetworkAccess accessType = Connectivity.Current.NetworkAccess;
+        NetworkAccess accessType = Microsoft.Maui.Networking.Connectivity.Current.NetworkAccess;
+
 
         ReadAllResponse<NoteDataModel>? items = null;
         if (accessType == NetworkAccess.Internet)
@@ -75,7 +109,6 @@ public partial class Home
             {
 
                 CreateAndUpdate(items.Models);
-
 
             }
 
@@ -187,6 +220,31 @@ public partial class Home
 
         foreach (var note in untracks)
         {
+
+
+            if (note.Id == 0)
+            {
+                var model = new NoteDataModel()
+                {
+                    Color = note.Color,
+                    Content = note.Content,
+                    Id = 0,
+                    Tittle = note.Tittle
+                };
+
+                var response = await LIN.Access.Notes.Controllers.Notes.Create(model, LIN.Access.Notes.Session.Instance.Token);
+
+
+                if (response.Response == Responses.Success)
+                {
+                    model.Id = response.LastID;
+                    Notas?.Models.Add(model);
+                }
+                continue;
+            }
+
+
+
             _ = LIN.Access.Notes.Controllers.Notes.Update(note.Id, note.Tittle, note.Content, note.Color, LIN.Access.Notes.Session.Instance.Token);
             var nt = notas.FirstOrDefault(t => t.Id == note.Id);
 
@@ -211,5 +269,38 @@ public partial class Home
 
         _ = this.InvokeAsync(StateHasChanged);
     }
+
+
+
+
+
+
+
+
+
+
+
+    private async void Start(string user, string password)
+    {
+
+
+        // Iniciar sesión.
+        var (Session, Response) = await LIN.Access.Notes.Session.LoginWith(user, password);
+
+        // Validar respuesta.
+        switch (Response)
+        {
+
+            // Correcto.
+            case Responses.Success:
+
+                return;
+
+
+        }
+
+    }
+
+
 
 }

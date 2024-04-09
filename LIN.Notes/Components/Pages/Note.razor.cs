@@ -186,11 +186,39 @@ public partial class Note
             return;
 
         IsCreated = true;
-        var response = await LIN.Access.Notes.Controllers.Notes.Create(new Types.Notes.Models.NoteDataModel()
+
+        var access = Microsoft.Maui.Networking.Connectivity.Current.NetworkAccess;
+
+        CreateResponse response;
+        if (access == NetworkAccess.Internet)
         {
+            response = await LIN.Access.Notes.Controllers.Notes.Create(new Types.Notes.Models.NoteDataModel()
+            {
+                Color = NoteDataModel.Color,
+                Content = NoteDataModel.Content,
+                Tittle = NoteDataModel.Tittle
+            }, LIN.Access.Notes.Session.Instance.Token);
+        }
+        else
+        {
+            response = new()
+            {
+                LastID = 0
+            };
+        }
+
+
+        LocalDataBase.Data.NoteDB db = new();
+
+        _ = db.Append(new()
+        {
+            Id = response.LastID,
+            Color = NoteDataModel.Color,
             Content = NoteDataModel.Content,
-            Tittle = NoteDataModel.Tittle
-        }, LIN.Access.Notes.Session.Instance.Token);
+            Tittle = NoteDataModel.Tittle,
+            IsConfirmed = response.LastID > 0
+        });
+
 
 
         NoteDataModel.Id = response.LastID;
