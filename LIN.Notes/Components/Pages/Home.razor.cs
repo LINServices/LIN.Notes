@@ -48,7 +48,7 @@ public partial class Home
                 // Usuario
                 var user = await database.GetDefault();
 
-                Start(user?.UserU, user?.Password);
+                await Start(user?.UserU, user?.Password);
             }
 
             _ = InvokeAsync(()=>RefreshData(true));
@@ -105,7 +105,6 @@ public partial class Home
         
         // Items
         NetworkAccess accessType = Microsoft.Maui.Networking.Connectivity.Current.NetworkAccess;
-
 
         ReadAllResponse<NoteDataModel>? items = null;
         if (accessType == NetworkAccess.Internet)
@@ -219,6 +218,7 @@ public partial class Home
 
     async void CreateAndUpdate(List<NoteDataModel> notas)
     {
+
         // Guardar.
         LIN.LocalDataBase.Data.NoteDB noteDB = new();
 
@@ -254,7 +254,8 @@ public partial class Home
 
 
 
-            _ = LIN.Access.Notes.Controllers.Notes.Update(note.Id, note.Tittle, note.Content, note.Color, LIN.Access.Notes.Session.Instance.Token);
+            await LIN.Access.Notes.Controllers.Notes.Update(note.Id, note.Tittle, note.Content, note.Color, LIN.Access.Notes.Session.Instance.Token);
+            
             var nt = notas.FirstOrDefault(t => t.Id == note.Id);
 
             if (nt != null)
@@ -287,9 +288,7 @@ public partial class Home
 
 
 
-
-
-    private async void Start(string user, string password)
+    private async Task Start(string user, string password)
     {
 
 

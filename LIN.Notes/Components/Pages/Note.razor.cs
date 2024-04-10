@@ -17,45 +17,22 @@ public partial class Note
     /// <summary>
     /// Modelo de la nota.
     /// </summary>
-    Types.Notes.Models.NoteDataModel? NoteDataModel { get; set; }
+    private NoteDataModel? NoteDataModel { get; set; }
 
 
 
     /// <summary>
     /// Titulo.
     /// </summary>
-    string Tittle
-    {
-        get => (string.IsNullOrWhiteSpace(NoteDataModel?.Tittle)) ? "Sin Titulo" : NoteDataModel?.Tittle ?? "";
-        set
-        {
-            if (NoteDataModel == null)
-                return;
-
-            NoteDataModel.Tittle = (string.IsNullOrWhiteSpace(value)) ? "Sin titulo" : value;
-
-            if (!IsCreated)
-                Create();
-        }
-    }
+    string Tittle { get; set; }
 
 
 
     /// <summary>
     /// Contenido.
     /// </summary>
-    string Content
-    {
-        get => NoteDataModel?.Content ?? ""; set
-        {
-            if (NoteDataModel == null)
-                return;
+    string Content { get; set; }
 
-            NoteDataModel.Content = value;
-            if (!IsCreated)
-                Create();
-        }
-    }
 
 
 
@@ -67,8 +44,9 @@ public partial class Note
 
 
 
-
-
+    /// <summary>
+    /// Evento al establecer los parámetros.
+    /// </summary>
     protected override void OnParametersSet()
     {
 
@@ -78,6 +56,10 @@ public partial class Note
         // Si la nota no existe.
         NoteDataModel = note ?? new();
 
+        // Valores
+        Tittle = note?.Tittle ?? string.Empty;
+        Content = note?.Content ?? string.Empty;
+
         // Color.
         MainPage.OnColor = SetColor;
 
@@ -86,13 +68,16 @@ public partial class Note
 
 
 
-    void Back()
-    {
-        JS.InvokeVoidAsync("BackLast");
-    }
+    /// <summary>
+    /// Volver a atrás.
+    /// </summary>
+    void Back() => JS.InvokeVoidAsync("BackLast");
 
 
 
+    /// <summary>
+    /// Establecer el nuevo color.
+    /// </summary>
     void SetColor()
     {
         GetClass();
@@ -100,13 +85,11 @@ public partial class Note
 
 
 
-
-
+    /// <summary>
+    /// Obtener las clases.
+    /// </summary>
     string GetClass()
     {
-
-
-
         switch (NoteDataModel?.Color)
         {
             case 1:
@@ -127,19 +110,34 @@ public partial class Note
 
 
 
+    /// <summary>
+    /// Input.
+    /// </summary>
     async void Input(Microsoft.AspNetCore.Components.ChangeEventArgs e)
     {
+
+
+        c += 1;
+        int my = c;
+
+        await Task.Delay(500);
+
+        if (c != my)
+            return;
 
         string value = e.Value?.ToString() ?? "";
 
         if (NoteDataModel == null)
             return;
 
+        NoteDataModel.Content = value;
+
 
         if (NoteDataModel.Id <= 0)
             return;
 
-        var response = await LIN.Access.Notes.Controllers.Notes.Update(NoteDataModel.Id, NoteDataModel.Tittle, value, NoteDataModel.Color, LIN.Access.Notes.Session.Instance.Token);
+
+        var response = await LIN.Access.Notes.Controllers.Notes.Update(NoteDataModel.Id, NoteDataModel.Tittle, NoteDataModel.Content, NoteDataModel.Color, LIN.Access.Notes.Session.Instance.Token);
 
         var db = new LocalDataBase.Data.NoteDB();
 
@@ -154,20 +152,36 @@ public partial class Note
 
     }
 
+    int c = 0;
 
 
     async void InputTittle(Microsoft.AspNetCore.Components.ChangeEventArgs e)
     {
 
+
+        c += 1;
+        int my = c;
+
+        await Task.Delay(500);
+
+        if (c != my)
+            return;
+
+
         string value = e.Value?.ToString() ?? "";
+
 
         if (NoteDataModel == null)
             return;
 
+
+        NoteDataModel.Content = value;
+
+
         if (NoteDataModel.Id <= 0)
             return;
 
-        var response = await LIN.Access.Notes.Controllers.Notes.Update(NoteDataModel.Id, value, NoteDataModel.Content, NoteDataModel.Color, LIN.Access.Notes.Session.Instance.Token);
+        var response = await LIN.Access.Notes.Controllers.Notes.Update(NoteDataModel.Id, NoteDataModel.Tittle, NoteDataModel.Content, NoteDataModel.Color, LIN.Access.Notes.Session.Instance.Token);
 
         var db = new LocalDataBase.Data.NoteDB();
 
@@ -176,7 +190,7 @@ public partial class Note
             Color = NoteDataModel.Color,
             Content = NoteDataModel.Content,
             Id = NoteDataModel.Id,
-            Tittle = value,
+            Tittle = NoteDataModel.Tittle,
             IsConfirmed = response.Response == Responses.Success,
         });
 
@@ -245,8 +259,26 @@ public partial class Note
 
         NoteDataModel.Color = color;
 
-        if (NoteDataModel.Id > 0)
-            await LIN.Access.Notes.Controllers.Notes.Update(NoteDataModel.Id, color, Session.Instance.Token);
+
+
+        if (NoteDataModel.Id <= 0)
+            return;
+
+
+        var response = await LIN.Access.Notes.Controllers.Notes.Update(NoteDataModel.Id, color, Session.Instance.Token);
+
+
+        var db = new LocalDataBase.Data.NoteDB();
+
+        _ = db.Update(new LocalDataBase.Models.Note()
+        {
+            Color = NoteDataModel.Color,
+            Content = NoteDataModel.Content,
+            Id = NoteDataModel.Id,
+            Tittle = NoteDataModel.Tittle,
+            IsConfirmed = response.Response == Responses.Success,
+        });
+
 
         StateHasChanged();
 
