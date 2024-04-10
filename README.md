@@ -19,8 +19,21 @@
 
 ## Capturas
 
+<img alt="heyform logo" height="30" src="./Img/android.png">
+
 ### Modo Claro
-<img alt="heyform logo" height="500" src="./Img/light.png">
+![alt text](./Img/light.png)
 
 ### Modo Oscuro
-<img alt="heyform logo" height="500" src="./Img/dark.png">
+![alt text](./Img/dark.png)
+
+
+## Capturas
+
+<img alt="heyform logo" height="30" src="./Img/computer.png">
+
+### Modo Claro
+![alt text](./Img/light_windows.png)
+
+### Modo Oscuro
+![alt text](./Img/dark_windows.png)
