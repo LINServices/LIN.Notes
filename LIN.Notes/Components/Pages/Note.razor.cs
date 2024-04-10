@@ -37,14 +37,6 @@ public partial class Note
 
 
     /// <summary>
-    /// La nota esta creada.
-    /// </summary>
-    private bool IsCreated { get; set; }
-
-
-
-
-    /// <summary>
     /// Evento al establecer los parámetros.
     /// </summary>
     protected override void OnParametersSet()
