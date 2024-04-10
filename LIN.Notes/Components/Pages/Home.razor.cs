@@ -5,18 +5,10 @@ public partial class Home
 {
 
 
-
-
-
-
-
-
-
-
-
-
-
-    public static ReadAllResponse<Types.Notes.Models.NoteDataModel>? Notas { get; set; }
+    /// <summary>
+    /// Notas actuales.
+    /// </summary>
+    public static ReadAllResponse<NoteDataModel>? Notes { get; set; }
 
 
 
@@ -25,44 +17,18 @@ public partial class Home
     /// </summary>
     public Home()
     {
+        // Cargar datos.
         Load();
+
+        // Acción al cambiar el tema.
         MainPage.OnColor = MauiProgram.Aa;
+
+        // Ejecutar cambio de tema.
         MauiProgram.Aa();
 
-        Microsoft.Maui.Networking.Connectivity.ConnectivityChanged += Connectivity;
+        // Evento al cambiar la conexión.
+        Connectivity.ConnectivityChanged += OnConnectivityChanged;
     }
-
-    private async void Connectivity(object? sender, ConnectivityChangedEventArgs e)
-    {
-
-        if (e.NetworkAccess == NetworkAccess.Internet)
-        {
-
-
-            if (LIN.Access.Notes.Session.Instance.IsLocal)
-            {
-
-                LocalDataBase.Data.UserDB database = new();
-
-
-                // Usuario
-                var user = await database.GetDefault();
-
-                await Start(user?.UserU, user?.Password);
-            }
-
-            _ = InvokeAsync(() => RefreshData(true));
-
-        }
-        else
-        {
-            LIN.Access.Notes.Session.Instance.IsLocal = true;
-        }
-
-        _ = InvokeAsync(StateHasChanged);
-
-    }
-
 
 
 
@@ -79,18 +45,57 @@ public partial class Home
             await RefreshData();
             _ = InvokeAsync(StateHasChanged);
         }
-        catch
+        catch (Exception)
         {
         }
-
-
 
     }
 
 
 
+    /// <summary>
+    /// Evento al cambiar el estado de conexión.
+    /// </summary>
+    /// <param name="sender">Objeto.</param>
+    /// <param name="e">Evento.</param>
+    private async void OnConnectivityChanged(object? sender, ConnectivityChangedEventArgs e)
+    {
+
+        // Si no hay acceso a internet.
+        if (e.NetworkAccess != NetworkAccess.Internet)
+        {
+            // Establecer la sesión como local.
+            Session.Instance.IsLocal = true;
+
+            // Actualizar la pantalla.
+            _ = InvokeAsync(StateHasChanged);
+            return;
+        }
 
 
+        // La sesión es local.
+        if (Session.Instance.IsLocal)
+        {
+
+            // Base de datos local.
+            var database = new LocalDataBase.Data.UserDB();
+
+            // Usuario.
+            var user = await database.GetDefault();
+
+            // Iniciar sesión.
+            await Home.Start(user?.UserU ?? "", user?.Password ?? "");
+
+        }
+
+
+        // Refrescar datos.
+        _ = InvokeAsync(() => RefreshData(true));
+
+        // Refrescar pantalla.
+        _ = InvokeAsync(StateHasChanged);
+
+    }
 
 
 
@@ -100,28 +105,30 @@ public partial class Home
     private async Task RefreshData(bool force = false)
     {
 
-        if (!force && Notas != null)
+        // Si no es forzado y los datos están cargados.
+        if (!force && Notes != null)
             return;
 
-        // Items
-        NetworkAccess accessType = Microsoft.Maui.Networking.Connectivity.Current.NetworkAccess;
-
+        // Respuestas.
         ReadAllResponse<NoteDataModel>? items = null;
+
+        // Obtiene la conectividad actual.
+        NetworkAccess accessType = Connectivity.Current.NetworkAccess;
+
+        // Si tiene acceso a internet.
         if (accessType == NetworkAccess.Internet)
         {
 
-
+            // Obtener desde la API.
             items = await Access.Notes.Controllers.Notes.ReadAll(LIN.Access.Notes.Session.Instance.Token);
 
+            // Fue correcto.
             if (items.Response == Responses.Success)
-            {
-
                 CreateAndUpdate(items.Models);
-
-            }
 
         }
 
+        // Si no hay conexión.
         else
             items = new()
             {
@@ -136,10 +143,10 @@ public partial class Home
             };
 
 
-
-
         // Rellena los items
-        Notas = items;
+        Notes = items;
+
+        // Actualizar pantalla.
         _ = InvokeAsync(StateHasChanged);
         return;
 
@@ -147,19 +154,12 @@ public partial class Home
 
 
 
-    int count = 0;
-
-
-
-
-
     /// <summary>
     /// Cerrar la sesión.
     /// </summary>
-    async void CloseSession()
+    private async void CloseSession()
     {
-
-        await this.InvokeAsync(async () =>
+        await InvokeAsync(async () =>
         {
             LIN.Access.Auth.SessionAuth.CloseSession();
             LIN.LocalDataBase.Data.UserDB db = new();
@@ -170,113 +170,113 @@ public partial class Home
 
 
 
-
-
-
-
     /// <summary>
-    /// Aceptar.
+    /// Navegar a una nota.
     /// </summary>
-    void OnSuccess()
+    /// <param name="note">Modelo.</param>
+    private void Go(NoteDataModel note)
     {
-        count++;
-        StateHasChanged();
-    }
 
-
-    async void Close()
-    {
-        Notas = null;
-        LIN.Access.Auth.SessionAuth.CloseSession();
-        LocalDataBase.Data.UserDB database = new();
-        await database.DeleteUsers();
-    }
-
-
-
-    void Go(NoteDataModel note)
-    {
+        // Url.
         var url = NavigationManager.BaseUri + "note";
 
+        // Agregar parámetros.
         url = Global.Utilities.Network.Web.AddParameters(url, new Dictionary<string, string>()
         {
             {"Id", note.Id.ToString() }
         });
 
+        // Navegar.
         NavigationManager.NavigateTo(url);
 
     }
 
 
-    async void Open()
+
+    /// <summary>
+    /// Ir a crear nueva nota.
+    /// </summary>
+    private void Create() => Go(new());
+
+
+
+    /// <summary>
+    /// Limpiar.
+    /// </summary>
+    /// <param name="notas">Lista de notas.</param>
+    private async void CreateAndUpdate(List<NoteDataModel> notas)
     {
-        Go(new());
-    }
 
+        // Base de datos local.
+        var noteDB = new LocalDataBase.Data.NoteDB();
 
+        // Obtener notas no seguidas.
+        var notTracked = await noteDB.GetUntrack();
 
-
-    async void CreateAndUpdate(List<NoteDataModel> notas)
-    {
-
-        // Guardar.
-        LIN.LocalDataBase.Data.NoteDB noteDB = new();
-
-
-
-        var untracks = await noteDB.GetUntrack();
-
-
-        foreach (var note in untracks)
+        // Recorrer las notas no seguidas.
+        foreach (var note in notTracked)
         {
 
-
+            // Eliminar del servidor.
             if (note.IsDeleted && note.Id > 0)
             {
-                await LIN.Access.Notes.Controllers.Notes.Delete(note.Id, LIN.Access.Notes.Session.Instance.Token);
-                notas.RemoveAll(t => t.Id == note.Id);
+                // Solicitud a la API.
+                await Access.Notes.Controllers.Notes.Delete(note.Id, Session.Instance.Token);
+
+                // Eliminar de la lista local.
+                notas.RemoveAll(localNote => localNote.Id == note.Id);
                 continue;
             }
 
-
-
+            // Crear nota.
             if (note.Id < 0)
             {
-                var model = new NoteDataModel()
+
+                // Nuevo modelo.
+                var newModel = new NoteDataModel()
                 {
-                    Color = note.Color,
-                    Content = note.Content,
                     Id = 0,
-                    Tittle = note.Tittle
+                    Tittle = note.Tittle,
+                    Content = note.Content,
+                    Color = note.Color
                 };
 
-                var response = await LIN.Access.Notes.Controllers.Notes.Create(model, LIN.Access.Notes.Session.Instance.Token);
+                // Enviar a la API.
+                var response = await Access.Notes.Controllers.Notes.Create(newModel, Session.Instance.Token);
 
-
+                // Validar.
                 if (response.Response == Responses.Success)
                 {
-                    model.Id = response.LastID;
-                    Notas?.Models.Add(model);
+                    // Establecer el nuevo Id.
+                    newModel.Id = response.LastID;
+
+                    // Agregar a lista local.
+                    Notes?.Models.Add(newModel);
                 }
+
                 continue;
+
             }
 
 
+            // Actualizar.
+            await LIN.Access.Notes.Controllers.Notes.Update(note.Id, note.Tittle, note.Content, note.Color, Session.Instance.Token);
 
-            await LIN.Access.Notes.Controllers.Notes.Update(note.Id, note.Tittle, note.Content, note.Color, LIN.Access.Notes.Session.Instance.Token);
+            // Obtener la nota local.
+            var localNote = notas.FirstOrDefault(t => t.Id == note.Id);
 
-            var nt = notas.FirstOrDefault(t => t.Id == note.Id);
-
-            if (nt != null)
+            // Si la nota si existe.
+            if (localNote != null)
             {
-                nt.Tittle = note.Tittle;
-                nt.Content = note.Content;
-                nt.Color = note.Color;
+                localNote.Tittle = note.Tittle;
+                localNote.Content = note.Content;
+                localNote.Color = note.Color;
             }
+
         }
 
 
-        // Save.
+        // Guardar en la base de datos local.
         await noteDB.Save(notas.Select(t => new LocalDataBase.Models.Note
         {
             Color = t.Color,
@@ -286,35 +286,22 @@ public partial class Home
             IsConfirmed = true
         }).ToList());
 
+        // Invocar el cambio.
         _ = this.InvokeAsync(StateHasChanged);
     }
 
 
 
-
-
-
-
-
-
-    private async Task Start(string user, string password)
+    /// <summary>
+    /// Iniciar sesión de servidor.
+    /// </summary>
+    /// <param name="user">Usuario.</param>
+    /// <param name="password">Contraseña.</param>
+    private static async Task Start(string user, string password)
     {
 
-
         // Iniciar sesión.
-        var (Session, Response) = await LIN.Access.Notes.Session.LoginWith(user, password);
-
-        // Validar respuesta.
-        switch (Response)
-        {
-
-            // Correcto.
-            case Responses.Success:
-
-                return;
-
-
-        }
+        var (_, _) = await LIN.Access.Notes.Session.LoginWith(user, password);
 
     }
 

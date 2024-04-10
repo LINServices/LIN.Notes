@@ -43,7 +43,7 @@ public partial class Note
     {
 
         // Obtener la nota.
-        var note = Home.Notas?.Models?.Where(t => t.Id == Id).FirstOrDefault();
+        var note = Home.Notes?.Models?.Where(t => t.Id == Id).FirstOrDefault();
 
         // Si la nota no existe.
         NoteDataModel = note ?? new();
@@ -249,7 +249,7 @@ public partial class Note
         await localDataBase.DeleteOne(NoteDataModel.Id, response.Response == Responses.Success);
 
 
-        Home.Notas.Models.RemoveAll(t => t.Id == NoteDataModel.Id);
+        Home.Notes.Models.RemoveAll(t => t.Id == NoteDataModel.Id);
         NavigationManager.NavigateTo("Home");
         StateHasChanged();
 
@@ -310,7 +310,7 @@ public partial class Note
             });
 
             // Agregar al home.
-            Home.Notas?.Models.Add(NoteDataModel);
+            Home.Notes?.Models.Add(NoteDataModel);
 
             // Establecer.
             IsSaving = false;

@@ -72,21 +72,21 @@
 
 
 
-            @if (Notas == null)
+            @if (Notes == null)
             {
                 <LIN.Notes.Components.Elements.Loader></LIN.Notes.Components.Elements.Loader>
             }
             else
             {
                 
-                @if (Notas.Response != Responses.Success)
+                @if (Notes.Response != Responses.Success)
                 {
                     <label>Error</label>
                 }
                 else
                 {
 
-                    @foreach(var e in Notas.Models)
+                    @foreach(var e in Notes.Models)
                     {
                         <LIN.Notes.Components.Shared.NoteControl Note="e" OnClick="Go" />
                     }
@@ -111,5 +111,5 @@
 
 
 
-<LIN.Notes.Components.Elements.BottomNavigation OnClick="Open"></LIN.Notes.Components.Elements.BottomNavigation>
+<LIN.Notes.Components.Elements.BottomNavigation OnClick="Create"></LIN.Notes.Components.Elements.BottomNavigation>
 
