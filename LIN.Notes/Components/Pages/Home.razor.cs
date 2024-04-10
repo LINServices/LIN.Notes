@@ -51,7 +51,7 @@ public partial class Home
                 await Start(user?.UserU, user?.Password);
             }
 
-            _ = InvokeAsync(()=>RefreshData(true));
+            _ = InvokeAsync(() => RefreshData(true));
 
         }
         else
@@ -102,7 +102,7 @@ public partial class Home
 
         if (!force && Notas != null)
             return;
-        
+
         // Items
         NetworkAccess accessType = Microsoft.Maui.Networking.Connectivity.Current.NetworkAccess;
 
@@ -231,7 +231,16 @@ public partial class Home
         {
 
 
-            if (note.Id == 0)
+            if (note.IsDeleted && note.Id > 0)
+            {
+                await LIN.Access.Notes.Controllers.Notes.Delete(note.Id, LIN.Access.Notes.Session.Instance.Token);
+                notas.RemoveAll(t => t.Id == note.Id);
+                continue;
+            }
+
+
+
+            if (note.Id < 0)
             {
                 var model = new NoteDataModel()
                 {
@@ -255,7 +264,7 @@ public partial class Home
 
 
             await LIN.Access.Notes.Controllers.Notes.Update(note.Id, note.Tittle, note.Content, note.Color, LIN.Access.Notes.Session.Instance.Token);
-            
+
             var nt = notas.FirstOrDefault(t => t.Id == note.Id);
 
             if (nt != null)

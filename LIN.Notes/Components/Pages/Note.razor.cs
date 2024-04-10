@@ -132,23 +132,7 @@ public partial class Note
 
         NoteDataModel.Content = value;
 
-
-        if (NoteDataModel.Id <= 0)
-            return;
-
-
-        var response = await LIN.Access.Notes.Controllers.Notes.Update(NoteDataModel.Id, NoteDataModel.Tittle, NoteDataModel.Content, NoteDataModel.Color, LIN.Access.Notes.Session.Instance.Token);
-
-        var db = new LocalDataBase.Data.NoteDB();
-
-        _ = db.Update(new LocalDataBase.Models.Note()
-        {
-            Color = NoteDataModel.Color,
-            Content = value,
-            Id = NoteDataModel.Id,
-            Tittle = NoteDataModel.Tittle,
-            IsConfirmed = response.Response == Responses.Success,
-        });
+        await Save();
 
     }
 
@@ -175,77 +159,40 @@ public partial class Note
             return;
 
 
-        NoteDataModel.Content = value;
+        NoteDataModel.Tittle = value;
 
-
-        if (NoteDataModel.Id <= 0)
-            return;
-
-        var response = await LIN.Access.Notes.Controllers.Notes.Update(NoteDataModel.Id, NoteDataModel.Tittle, NoteDataModel.Content, NoteDataModel.Color, LIN.Access.Notes.Session.Instance.Token);
-
-        var db = new LocalDataBase.Data.NoteDB();
-
-        _ = db.Update(new LocalDataBase.Models.Note()
-        {
-            Color = NoteDataModel.Color,
-            Content = NoteDataModel.Content,
-            Id = NoteDataModel.Id,
-            Tittle = NoteDataModel.Tittle,
-            IsConfirmed = response.Response == Responses.Success,
-        });
-
+        await Save();
     }
 
 
 
 
-    async void Create()
+    static async Task<int> Create(NoteDataModel model)
     {
 
-        if (IsCreated || NoteDataModel?.Id != 0)
-            return;
+        // Acceso.
+        var access = Connectivity.Current.NetworkAccess;
 
-        IsCreated = true;
-
-        var access = Microsoft.Maui.Networking.Connectivity.Current.NetworkAccess;
-
+        // Respuesta.
         CreateResponse response;
+
+        // Validar el acceso a internet.
         if (access == NetworkAccess.Internet)
         {
+            // Solicitud a la API.
             response = await LIN.Access.Notes.Controllers.Notes.Create(new Types.Notes.Models.NoteDataModel()
             {
-                Color = NoteDataModel.Color,
-                Content = NoteDataModel.Content,
-                Tittle = NoteDataModel.Tittle
-            }, LIN.Access.Notes.Session.Instance.Token);
-        }
-        else
-        {
-            response = new()
-            {
-                LastID = 0
-            };
+                Color = model.Color,
+                Content = model.Content,
+                Tittle = model.Tittle
+            },
+            Session.Instance.Token);
+
+            // Respuesta.
+            return (response.Response == Responses.Success) ? response.LastID : 0;
         }
 
-
-        LocalDataBase.Data.NoteDB db = new();
-
-        _ = db.Append(new()
-        {
-            Id = response.LastID,
-            Color = NoteDataModel.Color,
-            Content = NoteDataModel.Content,
-            Tittle = NoteDataModel.Tittle,
-            IsConfirmed = response.LastID > 0
-        });
-
-
-
-        NoteDataModel.Id = response.LastID;
-
-        Home.Notas?.Models.Add(NoteDataModel);
-
-
+        return 0;
 
     }
 
@@ -260,12 +207,12 @@ public partial class Note
         NoteDataModel.Color = color;
 
 
-
-        if (NoteDataModel.Id <= 0)
-            return;
+        ResponseBase response = new();
 
 
-        var response = await LIN.Access.Notes.Controllers.Notes.Update(NoteDataModel.Id, color, Session.Instance.Token);
+
+        if (NoteDataModel.Id > 0)
+            response = await LIN.Access.Notes.Controllers.Notes.Update(NoteDataModel.Id, color, Session.Instance.Token);
 
 
         var db = new LocalDataBase.Data.NoteDB();
@@ -277,6 +224,7 @@ public partial class Note
             Id = NoteDataModel.Id,
             Tittle = NoteDataModel.Tittle,
             IsConfirmed = response.Response == Responses.Success,
+            IsDeleted = false
         });
 
 
@@ -288,25 +236,109 @@ public partial class Note
 
     async void Delete()
     {
-        if (NoteDataModel == null || NoteDataModel.Id <= 0)
+        if (NoteDataModel == null)
             return;
 
-        var response = await LIN.Access.Notes.Controllers.Notes.Delete(NoteDataModel.Id, Session.Instance.Token);
 
-
-        if (response.Response == Responses.Success)
+        // Respuesta.
+        ResponseBase response = new()
         {
-            Home.Notas.Models.RemoveAll(t => t.Id == NoteDataModel.Id);
-            NavigationManager.NavigateTo("Home");
-        }
+            Response = Responses.Undefined
+        };
+
+        // Base de datos local.
+        var localDataBase = new LocalDataBase.Data.NoteDB();
+
+        // Respuesta de la API.
+        if (NoteDataModel.Id > 0)
+            response = await LIN.Access.Notes.Controllers.Notes.Delete(NoteDataModel.Id, Session.Instance.Token);
+
+        // ELiminar en local.
+        await localDataBase.DeleteOne(NoteDataModel.Id, response.Response == Responses.Success);
 
 
-        var db = new LocalDataBase.Data.NoteDB();
-
-        _ = db.DeleteOne(NoteDataModel.Id);
-
+        Home.Notas.Models.RemoveAll(t => t.Id == NoteDataModel.Id);
+        NavigationManager.NavigateTo("Home");
         StateHasChanged();
 
     }
+
+
+
+    bool IsSaving = false;
+
+    /// <summary>
+    /// Guardar los cambios.
+    /// </summary>
+    private async Task Save()
+    {
+
+        // Validar parámetros.
+        if (NoteDataModel == null || IsSaving)
+            return;
+
+        // Establecer nuevo estado.
+        IsSaving = true;
+
+
+        // Respuesta.
+        ResponseBase response = new()
+        {
+            Response = Responses.Undefined
+        };
+
+        // Base de datos local.
+        var localDataBase = new LocalDataBase.Data.NoteDB();
+
+        // Respuesta de la API.
+        if (NoteDataModel.Id > 0)
+            response = await Access.Notes.Controllers.Notes.Update(NoteDataModel.Id, NoteDataModel.Tittle, NoteDataModel.Content, NoteDataModel.Color, Session.Instance.Token);
+
+        // Crear local.
+        else if (NoteDataModel.Id == 0)
+        {
+
+            // Id.
+            NoteDataModel.Id = new Random().Next(-10000, -2);
+
+            // Es creado.
+            int isCreated = await Create(NoteDataModel);
+
+            // Esta confirmado
+            bool isConfirmed = !(isCreated <= 0);
+
+            // Guardar local.
+            await localDataBase.Append(new()
+            {
+                Color = NoteDataModel.Color,
+                Content = NoteDataModel.Content,
+                Id = isConfirmed ? isCreated : NoteDataModel.Id,
+                Tittle = NoteDataModel.Tittle,
+                IsConfirmed = isConfirmed
+            });
+
+            // Agregar al home.
+            Home.Notas?.Models.Add(NoteDataModel);
+
+            // Establecer.
+            IsSaving = false;
+            return;
+        }
+
+        // Actualizar en local.
+        await localDataBase.Update(new LocalDataBase.Models.Note()
+        {
+            Color = NoteDataModel.Color,
+            Content = NoteDataModel.Content,
+            Id = NoteDataModel.Id,
+            Tittle = NoteDataModel.Tittle,
+            IsConfirmed = response.Response == Responses.Success,
+        });
+
+        // Nuevo estado.
+        IsSaving = false;
+
+    }
+
 
 }

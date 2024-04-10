@@ -1,35 +1,36 @@
-﻿using LIN.Types.Notes.Models;
-
-namespace LIN.Notes.Components.Shared;
+﻿namespace LIN.Notes.Components.Shared;
 
 public partial class NoteControl
 {
 
+    /// <summary>
+    /// Modelo de la nota.
+    /// </summary>
     [Parameter]
     public NoteDataModel? Note { get; set; }
 
 
+
+    /// <summary>
+    /// Evento click sobre la nota.
+    /// </summary>
     [Parameter]
     public Action<NoteDataModel?> OnClick { get; set; } = (e) => { };
 
 
+
+    /// <summary>
+    /// Obtener las clases de los colores.
+    /// </summary>
     string GetClass()
     {
-
-
-        switch (Note?.Color)
+        return (Note?.Color) switch
         {
-            case 1:
-                return "bg-salmon/50 dark:bg-salmon/20";
-            case 2:
-                return "bg-glass/50 dark:bg-glass/20";
-            case 3:
-                return "bg-cream-green/50 dark:bg-cream-green/20";
-        }
-
-
-        return "bg-yell/50 dark:bg-yell/20";
-
+            1 => "bg-salmon/50 dark:bg-salmon/20",
+            2 => "bg-glass/50 dark:bg-glass/20",
+            3 => "bg-cream-green/50 dark:bg-cream-green/20",
+            _ => "bg-yell/50 dark:bg-yell/20",
+        };
     }
 
 
