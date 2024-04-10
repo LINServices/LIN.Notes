@@ -24,14 +24,14 @@ public partial class Note
     /// <summary>
     /// Titulo.
     /// </summary>
-    string Tittle { get; set; }
+    private string Tittle { get; set; } = string.Empty;
 
 
 
     /// <summary>
     /// Contenido.
     /// </summary>
-    string Content { get; set; }
+    private string Content { get; set; } = string.Empty;
 
 
 
@@ -249,7 +249,7 @@ public partial class Note
         await localDataBase.DeleteOne(NoteDataModel.Id, response.Response == Responses.Success);
 
 
-        Home.Notes.Models.RemoveAll(t => t.Id == NoteDataModel.Id);
+        Home.Notes?.Models.RemoveAll(t => t.Id == NoteDataModel.Id);
         NavigationManager.NavigateTo("Home");
         StateHasChanged();
 
