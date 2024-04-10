@@ -25,9 +25,11 @@
 
         </div>
 
+
         @* Titulo *@
         <input @oninput="InputTittle" @bind="Tittle" class="bg-transparent text-7xl font-medium text-zinc-800 outline-none dark:text-zinc-300" />
 
+        @* Botones de colores. *@
         <div class="flex gap-2">
 
             <button @onclick="()=>SetNewColor(0)" class="bg-yell/50 h-8 w-8 rounded-full @(NoteDataModel?.Color == 0 ? "border-2 border-black dark:border-zinc-200":"") dark:bg-yell/20"></button>
