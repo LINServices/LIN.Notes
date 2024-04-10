@@ -19,6 +19,8 @@
 
 ## Capturas
 
-<img alt="heyform logo" height="500" src="./Img/home.jpg">
-<img alt="heyform logo" height="500" src="./Img/home_dark.jpg">
-<img alt="heyform logo" height="500" src="./Img/note.jpg">
+### Modo Claro
+<img alt="heyform logo" height="500" src="./Img/light.png">
+
+### Modo Oscuro
+<img alt="heyform logo" height="500" src="./Img/dark.png">

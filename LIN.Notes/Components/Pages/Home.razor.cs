@@ -1,8 +1,12 @@
-﻿namespace LIN.Notes.Components.Pages;
+﻿
+namespace LIN.Notes.Components.Pages;
 
 
 public partial class Home
 {
+
+
+    int Color = -1;
 
 
     /// <summary>
@@ -306,5 +310,12 @@ public partial class Home
     }
 
 
+
+
+    void SetColor(int color)
+    {
+        Color = color;
+        InvokeAsync(StateHasChanged);
+    }
 
 }
