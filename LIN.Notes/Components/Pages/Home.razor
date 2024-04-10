@@ -22,7 +22,6 @@
                 @* Perfil. *@
                 @if (LIN.Access.Notes.Session.Instance.Account.Profile.Length <= 0)
                 {
-
                     <div @onclick="CloseSession" class="relative inline-flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-gray-100 dark:bg-zinc-800">
                         <span class="text-sm text-gray-600 dark:text-gray-300">@(Global.Utilities.Strings.GetInitials(LIN.Access.Notes.Session.Instance.Account.Name))</span>
                     </div>
@@ -32,7 +31,7 @@
                     <img @onclick="CloseSession" class="h-10 w-10 rounded-full" src="@url" alt="Rounded avatar">
                 }
 
-                <label class="font-medium text-zinc-900 dark:text-zinc-300">Alex</label>
+                <label class="font-medium text-zinc-900 dark:text-zinc-300">@LIN.Access.Notes.Session.Instance.Account.Name</label>
             </div>
         </div>
 
@@ -76,7 +75,7 @@
             @* Pantalla de carga. *@
             @if (Notes == null)
             {
-                <div class="flex w-full justify-center p-4">
+                <div class="col-span-2 flex w-full justify-center p-4 md:col-span-4">
                     <LIN.Notes.Components.Elements.Loader />
                 </div>
             }
