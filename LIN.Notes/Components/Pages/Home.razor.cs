@@ -168,6 +168,10 @@ public partial class Home : IDisposable
             LIN.Access.Auth.SessionAuth.CloseSession();
             LIN.LocalDataBase.Data.UserDB db = new();
             await db.DeleteUsers();
+
+            LIN.LocalDataBase.Data.NoteDB ntdb = new();
+            await ntdb.Delete();
+
             NavigationManager?.NavigateTo("/");
         });
     }
