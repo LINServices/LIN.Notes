@@ -2,7 +2,7 @@
 namespace LIN.Notes.Components.Pages;
 
 
-public partial class Home
+public partial class Home : IDisposable
 {
 
 
@@ -88,7 +88,7 @@ public partial class Home
             var user = await database.GetDefault();
 
             // Iniciar sesión.
-            await Home.Start(user?.UserU ?? "", user?.Password ?? "");
+            await Start(user?.UserU ?? "", user?.Password ?? "");
 
         }
 
@@ -137,7 +137,7 @@ public partial class Home
             items = new()
             {
                 Response = Responses.Success,
-                Models = (await new LocalDataBase.Data.NoteDB().Get()).Select(t => new NoteDataModel()
+                Models = (await new LocalDataBase.Data.NoteDB().Get()).Where(t => !t.IsDeleted).Select(t => new NoteDataModel()
                 {
                     Color = t.Color,
                     Content = t.Content,
@@ -204,12 +204,22 @@ public partial class Home
 
 
 
+    bool IsClean = false;
+
+
     /// <summary>
     /// Limpiar.
     /// </summary>
     /// <param name="notas">Lista de notas.</param>
     private async void CreateAndUpdate(List<NoteDataModel> notas)
     {
+
+        // Cleaning.
+        if (IsClean)
+            return;
+
+        // Establecer nuevo estado.
+        IsClean = true;
 
         // Base de datos local.
         var noteDB = new LocalDataBase.Data.NoteDB();
@@ -225,10 +235,18 @@ public partial class Home
             if (note.IsDeleted && note.Id > 0)
             {
                 // Solicitud a la API.
-                await Access.Notes.Controllers.Notes.Delete(note.Id, Session.Instance.Token);
+                var response = await Access.Notes.Controllers.Notes.Delete(note.Id, Session.Instance.Token);
 
-                // Eliminar de la lista local.
-                notas.RemoveAll(localNote => localNote.Id == note.Id);
+                if (response.Response == Responses.Success)
+                {
+                    // Eliminar de la lista local.
+                    notas.RemoveAll(localNote => localNote.Id == note.Id);
+
+                    // Eliminar del track local.
+                    await noteDB.Remove(note.Id);
+
+                }
+
                 continue;
             }
 
@@ -256,7 +274,14 @@ public partial class Home
 
                     // Agregar a lista local.
                     Notes?.Models.Add(newModel);
+
+                    // Eliminar del track local.
+                    await noteDB.Remove(note.Id);
+                    continue;
                 }
+
+                newModel.Id = note.Id;
+                notas.Add(newModel);
 
                 continue;
 
@@ -264,7 +289,7 @@ public partial class Home
 
 
             // Actualizar.
-            await LIN.Access.Notes.Controllers.Notes.Update(note.Id, note.Tittle, note.Content, note.Color, Session.Instance.Token);
+            await Access.Notes.Controllers.Notes.Update(note.Id, note.Tittle, note.Content, note.Color, Session.Instance.Token);
 
             // Obtener la nota local.
             var localNote = notas.FirstOrDefault(t => t.Id == note.Id);
@@ -289,6 +314,9 @@ public partial class Home
             Tittle = t.Tittle,
             IsConfirmed = true
         }).ToList());
+
+        // Establecer nuevo estado.
+        IsClean = false;
 
         // Invocar el cambio.
         _ = this.InvokeAsync(StateHasChanged);
@@ -318,4 +346,10 @@ public partial class Home
         InvokeAsync(StateHasChanged);
     }
 
+    public void Dispose()
+    {
+
+        // Evento al cambiar la conexión.
+        Connectivity.ConnectivityChanged -= OnConnectivityChanged;
+    }
 }

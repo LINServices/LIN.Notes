@@ -272,7 +272,6 @@ public partial class Note
         // Establecer nuevo estado.
         IsSaving = true;
 
-
         // Respuesta.
         ResponseBase response = new()
         {
@@ -309,6 +308,10 @@ public partial class Note
                 IsConfirmed = isConfirmed
             });
 
+            // Si esta confirmado.
+            if (isConfirmed)
+                NoteDataModel.Id = isCreated;
+            
             // Agregar al home.
             Home.Notes?.Models.Add(NoteDataModel);
 
