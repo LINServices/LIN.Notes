@@ -93,6 +93,9 @@ public partial class Note
             case 3:
                 MauiProgram.Set([211, 234, 184], [34, 43, 23]);
                 return "bg-cream-green/50 dark:bg-cream-green/20";
+            case 4:
+                MauiProgram.Set([198, 187, 217], [28, 25, 36]);
+                return "bg-cream-purple/50 dark:bg-cream-purple/20";
         }
 
         MauiProgram.Set([251, 233, 165], [49, 42, 15]);

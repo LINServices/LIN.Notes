@@ -17,6 +17,7 @@ module.exports = {
                 'salmon':'#EB7A53',
                 'glass':'#98B7DB',
                 'cream-green':'#A8D672',
+                'cream-purple':'#8E7AB5',
 
                 'current': {
                     '50': '#fef9e8',

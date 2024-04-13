@@ -29,6 +29,7 @@ public partial class NoteControl
             1 => "bg-salmon/50 dark:bg-salmon/20",
             2 => "bg-glass/50 dark:bg-glass/20",
             3 => "bg-cream-green/50 dark:bg-cream-green/20",
+            4 => "bg-cream-purple/50 dark:bg-cream-purple/20",
             _ => "bg-yell/50 dark:bg-yell/20",
         };
     }
