@@ -293,7 +293,14 @@ public partial class Home : IDisposable
 
 
             // Actualizar.
-            await Access.Notes.Controllers.Notes.Update(note.Id, note.Tittle, note.Content, note.Color, Session.Instance.Token);
+            await Access.Notes.Controllers.Notes.Update(new()
+            {
+                Id = note.Id,
+                Tittle = note.Tittle,
+                Content = note.Content,
+                Color = note.Color
+            }, Session.Instance.Token);
+
 
             // Obtener la nota local.
             var localNote = notas.FirstOrDefault(t => t.Id == note.Id);

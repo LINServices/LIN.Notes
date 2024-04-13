@@ -283,7 +283,7 @@ public partial class Note
 
         // Respuesta de la API.
         if (NoteDataModel.Id > 0)
-            response = await Access.Notes.Controllers.Notes.Update(NoteDataModel.Id, NoteDataModel.Tittle, NoteDataModel.Content, NoteDataModel.Color, Session.Instance.Token);
+            response = await Access.Notes.Controllers.Notes.Update(NoteDataModel, Session.Instance.Token);
 
         // Crear local.
         else if (NoteDataModel.Id == 0)
