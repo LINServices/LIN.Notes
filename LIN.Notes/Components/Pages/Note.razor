@@ -41,7 +41,7 @@
         </div>
 
         @* Contenido *@
-        <textarea @oninput="Input" @bind="Content" id="comment" rows="4" class="border-0 UIScroll mt-3 h-full w-full resize-none bg-transparent px-0 text-base text-gray-900 placeholder-zinc-800 outline-none focus:ring-0 dark:text-white dark:placeholder-gray-400" placeholder="Ecribir tu nota..." required />
+        <textarea @oninput="Input" @bind="Content" id="comment" rows="4" class="border-0 UIScroll mt-3 h-full w-full resize-none bg-transparent px-0 text-base text-gray-900 placeholder-zinc-800 outline-none focus:ring-0 dark:text-white dark:placeholder-gray-400 @(NoteDataModel?.Color == 1 ? "selection:bg-salmon dark:selection:bg-salmon/50" : NoteDataModel?.Color == 2 ? "selection:bg-glass dark:selection:bg-glass/50" : NoteDataModel?.Color == 3 ? "selection:bg-cream-green dark:selection:bg-cream-green/20" : NoteDataModel?.Color == 4 ? "selection:bg-cream-purple dark:selection:bg-cream-purple/50":"selection:bg-yell dark:selection:bg-yell/50" )" placeholder="Escribir tu nota..." required />
 
     </div>
 
