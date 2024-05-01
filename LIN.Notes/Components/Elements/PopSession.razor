@@ -1,0 +1,94 @@
+﻿@inject IJSRuntime js
+@inject NavigationManager nav
+
+@code {
+
+
+
+    string Key = Guid.NewGuid().ToString();
+
+
+    void A()
+    {
+
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        js.InvokeVoidAsync("ShopPop", $"popover-user-profile-{Key}", $"img-prof-{Key}");
+    }
+
+    void Send()
+    {
+    }
+
+    [Parameter]
+    public Action OnClick { get; set; } = () => { };
+
+    /// <summary>
+    /// Imagen de perfil en base64
+    /// </summary>
+    private static string Img64 => Convert.ToBase64String(Access.Notes.Session.Instance.Account.Profile);
+
+
+}
+
+
+@* Dropdown Open *@
+@if (string.IsNullOrWhiteSpace(Img64))
+{
+    <div id="img-prof-@Key" class="relative inline-flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-gray-100 dark:bg-zinc-800">
+        <span class="text-sm text-gray-600 dark:text-gray-300">@(Global.Utilities.Strings.GetInitials(LIN.Access.Notes.Session.Instance.Account.Name))</span>
+    </div>
+}
+else
+{
+    <img id="img-prof-@Key" class="h-10 w-10 rounded-full" src="data:image/png;base64,@Img64" alt="Rounded avatar">
+}
+
+
+<div id="popover-user-profile-@Key" role="tooltip" class="z-10 opacity-0 invisible absolute inline-block w-64 overflow-hidden rounded-lg border border-gray-200 bg-white text-sm text-gray-500 shadow-sm transition-opacity duration-300 dark:text-gray-400 dark:bg-zinc-800 dark:border-zinc-600">
+
+    <!-- Header -->
+    <div class="border-b border-gray-200 px-4 py-3 dark:border-gray-700">
+        <div class="flex items-center gap-x-3">
+
+
+            @* Dropdown Open *@
+            @if (string.IsNullOrWhiteSpace(Img64))
+            {
+                <div id="img-prof-@Key" class="relative inline-flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border bg-zinc-200 dark:bg-zinc-800 dark:border-zinc-600">
+                    <span class="font-medium text-gray-600 dark:text-zinc-300">@Global.Utilities.Strings.GetInitials(LIN.Access.Notes.Session.Instance.Account.Name)</span>
+                </div>
+            }
+            else
+            {
+                <button id="img-prof-@Key" type="button" class="flex rounded-full bg-white text-sm focus:ring-4 focus:ring-gray-300 dark:bg-zinc-700 dark:focus:ring-gray-600">
+                    <span class="sr-only">Open</span>
+                    <img class="ring-2 h-9 w-9 rounded-full p-1 ring-gray-400" src="data:image/png;base64,@Img64">
+                </button>
+            }
+
+
+            <div class="grow">
+                <h4 class="font-semibold text-gray-800 dark:text-white">
+                    @LIN.Access.Notes.Session.Instance.Account?.Name
+
+                </h4>
+                <p class="-mt-1 text-sm text-gray-500">
+                    @LIN.Access.Notes.Session.Instance.Account?.Identity?.Unique
+                </p>
+            </div>
+        </div>
+    </div>
+    <!-- End Header -->
+    <!-- Footer -->
+    <div class="flex items-center justify-between bg-gray-100 px-4 py-2 dark:bg-zinc-800">
+
+        <button @onclick="OnClick" type="button" class="flex w-full items-center justify-center gap-x-2 rounded-full border border-transparent bg-red-600 px-3 py-1.5 text-center text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50 disabled:pointer-events-none dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600">
+            Cerrar Sesión
+        </button>
+    </div>
+    <!-- End Footer -->
+
+</div>

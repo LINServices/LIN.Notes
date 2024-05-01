@@ -14,23 +14,9 @@
         <div class="mt-3">
             <div class="bg-yellow-400/30 flex w-max items-center gap-1 rounded-full pr-4 dark:bg-yellow-500/20">
 
-                @* Obtener la imagen de perfil. *@
-                @{
-                    string url = $"data:image/png;base64,{Convert.ToBase64String(LIN.Access.Notes.Session.Instance.Account.Profile)}";
-                }
-
                 @* Perfil. *@
-                @if (LIN.Access.Notes.Session.Instance.Account.Profile.Length <= 0)
-                {
-                    <div @onclick="CloseSession" class="relative inline-flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-gray-100 dark:bg-zinc-800">
-                        <span class="text-sm text-gray-600 dark:text-gray-300">@(Global.Utilities.Strings.GetInitials(LIN.Access.Notes.Session.Instance.Account.Name))</span>
-                    </div>
-                }
-                else
-                {
-                    <img @onclick="CloseSession" class="h-10 w-10 rounded-full" src="@url" alt="Rounded avatar">
-                }
-
+               <LIN.Notes.Components.Elements.PopSession OnClick="CloseSession" />
+                
                 <label class="font-medium text-zinc-900 dark:text-zinc-300">@LIN.Access.Notes.Session.Instance.Account.Name</label>
             </div>
         </div>
