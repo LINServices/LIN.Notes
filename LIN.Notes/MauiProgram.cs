@@ -67,7 +67,7 @@ public static class MauiProgram
         {
             currentActivity.Window.SetStatusBarColor(new(0, 0, 0));
             currentActivity.Window.SetNavigationBarColor(new(0, 0, 0));
-            currentActivity.Window.DecorView.SystemUiVisibility = (StatusBarVisibility)SystemUiFlags.LightStatusBar;
+           currentActivity.Window.DecorView.SystemUiVisibility = (StatusBarVisibility)SystemUiFlags.Visible;
         }
 
 
@@ -97,7 +97,7 @@ public static class MauiProgram
         {
             currentActivity.Window.SetStatusBarColor(new(dark[0], dark[1], dark[2]));
             currentActivity.Window.SetNavigationBarColor(new(dark[0], dark[1], dark[2]));
-            currentActivity.Window.DecorView.SystemUiVisibility = (StatusBarVisibility)SystemUiFlags.LightStatusBar;
+            currentActivity.Window.DecorView.SystemUiVisibility = (StatusBarVisibility)SystemUiFlags.Visible;
         }
 
 

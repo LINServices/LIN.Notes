@@ -94,51 +94,63 @@ public partial class Login
     /// </summary>
     protected override async Task OnInitializedAsync()
     {
-        LocalDataBase.Data.UserDB database = new();
 
-        NetworkAccess accessType = Connectivity.Current.NetworkAccess;
-
-        if (accessType != NetworkAccess.Internet && (await database.GetDefault()) != null)
-        {
-
-            var us = await database.GetDefault();
-            LIN.Access.Notes.Session.GenerateLocal(us?.UserName);
-            NavigationManager?.NavigateTo("/home");
-            return;
-        }
-
-
+        // Validar sesión activa.
         if (Access.Auth.SessionAuth.IsOpen)
         {
             NavigationManager?.NavigateTo("/home");
             return;
         }
 
+        // Base de datos local.
+        LocalDataBase.Data.UserDB database = new();
+
+        // Obtener conexión actual.
+        NetworkAccess accessType = Connectivity.Current.NetworkAccess;
+
+        // Validar sesión local.
+        var localSession = await database.GetDefault();
+
+        // Si hay sesión local.
+        if (localSession != null)
+        {
+            // Generar.
+            Session.GenerateLocal(new()
+            {
+                Name = localSession.Name,
+                Identity = new()
+                {
+                    Unique = localSession.Unique
+                },
+                Id = localSession.Id,
+                Profile = localSession.Profile
+            }, (accessType == NetworkAccess.Internet ? SessionType.Sync : SessionType.Local));
+
+            // Navegar.
+            NavigationManager?.NavigateTo("/home");
+        }
 
 
-        _ = base.OnInitializedAsync();
+        if (accessType != NetworkAccess.Internet)
+            return;
 
-
-
-
-        // Usuario
-        var user = await database.GetDefault();
 
         // Si no existe
-        if (user == null)
+        if (localSession == null)
         {
             UpdateSection(0);
             return;
         }
 
-
         UpdateSection(3);
 
         IsWithKey = false;
-        User = user.UserU;
-        Password = user.Password;
+        User = localSession.Unique;
+        Password = localSession.Password;
 
         Start();
+
+        _ = base.OnInitializedAsync();
 
     }
 
@@ -233,9 +245,8 @@ public partial class Login
             return;
         }
 
-
         // Iniciar sesión.
-        var (Session, Response) = await LIN.Access.Notes.Session.LoginWith(User, Password);
+        var (Session, Response) = await LIN.Access.Notes.Session.LoginWith(User, Password, true);
 
         // Validar respuesta.
         switch (Response)
@@ -251,7 +262,14 @@ public partial class Login
                 LocalDataBase.Data.UserDB database = new();
 
                 // Guardar información.
-                await database.SaveUser(new() { ID = Session!.Account.Id, UserU = Session!.Account.Identity.Unique, Password = Password });
+                await database.SaveUser(new()
+                {
+                    Id = Session!.Account.Id,
+                    Unique = Session!.Account.Identity.Unique,
+                    Name = Session.Account.Name,
+                    Profile = Session!.Account.Profile,
+                    Password = Password
+                });
 
                 // Navegar.
                 NavigationManager?.NavigateTo("/home");

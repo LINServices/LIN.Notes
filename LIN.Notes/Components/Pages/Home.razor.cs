@@ -32,6 +32,22 @@ public partial class Home : IDisposable
 
         // Evento al cambiar la conexión.
         Connectivity.ConnectivityChanged += OnConnectivityChanged;
+
+        LIN.Access.Notes.Observers.SessionObserver.OnUpdate += OnUpdateSession;
+    }
+
+
+
+    /// <summary>
+    /// Al actualizar la sesión.
+    /// </summary>
+    /// <param name="e">Session.</param>
+    private void OnUpdateSession(object? sender, Session e)
+    {
+        if (e.Type == SessionType.Connected)
+            this.InvokeAsync(() => RefreshData(true));
+        
+        this.InvokeAsync(StateHasChanged);
     }
 
 
@@ -69,7 +85,7 @@ public partial class Home : IDisposable
         if (e.NetworkAccess != NetworkAccess.Internet)
         {
             // Establecer la sesión como local.
-            Session.Instance.IsLocal = true;
+            Session.Instance.Type = SessionType.Local;
 
             // Actualizar la pantalla.
             _ = InvokeAsync(StateHasChanged);
@@ -78,7 +94,7 @@ public partial class Home : IDisposable
 
 
         // La sesión es local.
-        if (Session.Instance.IsLocal)
+        if (Session.Instance.Type == SessionType.Local)
         {
 
             // Base de datos local.
@@ -88,7 +104,7 @@ public partial class Home : IDisposable
             var user = await database.GetDefault();
 
             // Iniciar sesión.
-            await Start(user?.UserU ?? "", user?.Password ?? "");
+            await Start(user?.Unique ?? "", user?.Password ?? "");
 
         }
 
@@ -119,8 +135,25 @@ public partial class Home : IDisposable
         // Obtiene la conectividad actual.
         NetworkAccess accessType = Connectivity.Current.NetworkAccess;
 
+        var x = Session.Instance.Account;
+
+        // Cargar notas locales.
+        Notes = new()
+        {
+            Response = Responses.Success,
+            Models = (await new LocalDataBase.Data.NoteDB().Get()).Where(t => !t.IsDeleted).Select(t => new NoteDataModel()
+            {
+                Color = t.Color,
+                Content = t.Content,
+                Id = t.Id,
+                Tittle = t.Tittle
+            }).ToList()
+        };
+
+        _ = InvokeAsync(StateHasChanged);
+
         // Si tiene acceso a internet.
-        if (accessType == NetworkAccess.Internet)
+        if (Session.Instance.Type == SessionType.Connected && accessType == NetworkAccess.Internet)
         {
 
             // Obtener desde la API.
@@ -130,25 +163,12 @@ public partial class Home : IDisposable
             if (items.Response == Responses.Success)
                 CreateAndUpdate(items.Models);
 
+            // Rellena los items
+            Notes = items;
+
         }
 
-        // Si no hay conexión.
-        else
-            items = new()
-            {
-                Response = Responses.Success,
-                Models = (await new LocalDataBase.Data.NoteDB().Get()).Where(t => !t.IsDeleted).Select(t => new NoteDataModel()
-                {
-                    Color = t.Color,
-                    Content = t.Content,
-                    Id = t.Id,
-                    Tittle = t.Tittle
-                }).ToList()
-            };
 
-
-        // Rellena los items
-        Notes = items;
 
         // Actualizar pantalla.
         _ = InvokeAsync(StateHasChanged);
@@ -344,7 +364,7 @@ public partial class Home : IDisposable
     {
 
         // Iniciar sesión.
-        var (_, _) = await LIN.Access.Notes.Session.LoginWith(user, password);
+        var (_, _) = await LIN.Access.Notes.Session.LoginWith(user, password, true);
 
     }
 
