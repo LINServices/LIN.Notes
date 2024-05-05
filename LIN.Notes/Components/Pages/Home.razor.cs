@@ -33,6 +33,7 @@ public partial class Home : IDisposable
         // Evento al cambiar la conexión.
         Connectivity.ConnectivityChanged += OnConnectivityChanged;
 
+        // Evento al actualizar la sesión.
         LIN.Access.Notes.Observers.SessionObserver.OnUpdate += OnUpdateSession;
     }
 
@@ -185,6 +186,7 @@ public partial class Home : IDisposable
     {
         await InvokeAsync(async () =>
         {
+            LIN.Access.Notes.Observers.SessionObserver.Dispose();
             LIN.Access.Auth.SessionAuth.CloseSession();
             LIN.LocalDataBase.Data.UserDB db = new();
             await db.DeleteUsers();
@@ -380,7 +382,10 @@ public partial class Home : IDisposable
     public void Dispose()
     {
 
-        // Evento al cambiar la conexión.
+        // Eliminar evento al cambiar la conexión.
         Connectivity.ConnectivityChanged -= OnConnectivityChanged;
+
+        // Eliminar evento al actualizar la sesión.
+        LIN.Access.Notes.Observers.SessionObserver.OnUpdate -= OnUpdateSession;
     }
 }
