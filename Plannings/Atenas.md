@@ -3,9 +3,10 @@
 LIN Notes Atenas estará disponible próximamente.
 
 * Nuevos colores. ✅
+* La app es Local First. ✅
 * Edición en tiempo real. 📍
 * Compartir notas con otros usuarios. 📍
-* Optimizar al iniciar sesión localmente. 📍
+* Optimizar al iniciar sesión localmente.✅
 * ViewON para las notas. 📍
 
 ### ¿Que es ViewON?
