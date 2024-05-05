@@ -16,6 +16,7 @@
 * Sincronización: Sincroniza tus notas entre dispositivos Windows y Android para acceder a ellas en cualquier momento y en cualquier lugar.
 * Cambiar Colores: Personaliza el aspecto de tus notas cambiando los colores según tu preferencia.
 * Interfaz Intuitiva: Una interfaz de usuario simple y fácil de usar que hace que la gestión de notas sea rápida y eficiente.
+* Esta es una app Local First.
 
 ## Capturas
 
