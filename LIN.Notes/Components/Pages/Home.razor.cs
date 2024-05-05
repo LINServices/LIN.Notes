@@ -46,9 +46,9 @@ public partial class Home : IDisposable
     private void OnUpdateSession(object? sender, Session e)
     {
         if (e.Type == SessionType.Connected)
-            this.InvokeAsync(() => RefreshData(true));
-        
-        this.InvokeAsync(StateHasChanged);
+            InvokeAsync(() => RefreshData(true));
+
+        InvokeAsync(StateHasChanged);
     }
 
 

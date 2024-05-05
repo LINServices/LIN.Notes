@@ -70,8 +70,6 @@ public static class MauiProgram
            currentActivity.Window.DecorView.SystemUiVisibility = (StatusBarVisibility)SystemUiFlags.Visible;
         }
 
-
-        //currentActivity.Window.SetTitleColor(new(0, 0, 0));
 #endif
     }
 

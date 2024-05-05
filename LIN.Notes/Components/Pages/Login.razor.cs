@@ -82,12 +82,6 @@ public partial class Login
 
 
 
-    public Login()
-    {
-        MauiProgram.Aa();
-    }
-
-
 
     /// <summary>
     /// Evento.

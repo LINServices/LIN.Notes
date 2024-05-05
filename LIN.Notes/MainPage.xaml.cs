@@ -19,7 +19,6 @@
 
         }
 
-
         protected override void OnAppearing()
         {
             OnColor();
