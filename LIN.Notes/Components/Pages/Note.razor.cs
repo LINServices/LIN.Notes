@@ -36,6 +36,11 @@ public partial class Note
 
 
 
+    LIN.Notes.Components.Elements.DeletePopup DeletePop { get; set; }
+
+
+
+
     /// <summary>
     /// Evento al establecer los parámetros.
     /// </summary>

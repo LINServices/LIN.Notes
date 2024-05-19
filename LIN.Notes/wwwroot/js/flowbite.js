@@ -90,7 +90,7 @@ function ShowModal(id, ...idCloseBtn) {
         placement: 'center',
         backdrop: 'dynamic',
         backdropClasses:
-            'bg-zinc-900/50 dark:bg-black/80 fixed inset-0 z-40',
+            'bg-zinc-900/20 dark:bg-black/20 fixed inset-0 z-40',
         closable: true,
         onHide: () => {
             console.log('modal is hidden');
