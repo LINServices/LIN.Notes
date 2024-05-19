@@ -48,6 +48,7 @@
     <PackageReference Include="Plugin.Fingerprint" Version="2.1.5" targetFramework="monoandroid60" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\SILF\SILF\SILF.Script\SILF.Script.csproj" />
     <ProjectReference Include="..\..\..\AccesoAPI\LIN.Access.Notes\LIN.Access.Notes.csproj" />
     <ProjectReference Include="..\..\..\Tipos\LIN.Types.Notes\LIN.Types.Notes.csproj" />
     <ProjectReference Include="..\LIN.LocalDataBase\LIN.LocalDataBase.csproj" />

@@ -5,7 +5,7 @@ namespace LIN.Notes.Components.Pages;
 public partial class Home : IDisposable
 {
 
-
+    public static Home Instance { get; private set; }
     int Color = -1;
 
 
@@ -35,6 +35,8 @@ public partial class Home : IDisposable
 
         // Evento al actualizar la sesión.
         LIN.Access.Notes.Observers.SessionObserver.OnUpdate += OnUpdateSession;
+
+        Instance = this;
     }
 
 
@@ -353,6 +355,71 @@ public partial class Home : IDisposable
 
         // Invocar el cambio.
         _ = this.InvokeAsync(StateHasChanged);
+    }
+
+
+
+
+
+    /// <summary>
+    /// Limpiar.
+    /// </summary>
+    /// <param name="notas">Lista de notas.</param>
+    public async void RemoveOne(int id)
+    {
+        await this.InvokeAsync(async () =>
+         {
+
+             Notes?.Models.RemoveAll(t => t.Id == id);
+             StateHasChanged();
+
+             // Base de datos local.
+             var noteDB = new LocalDataBase.Data.NoteDB();
+
+             await noteDB.DeleteOne(id, true);
+
+
+         });
+
+    }
+
+
+
+    /// <summary>
+    /// Limpiar.
+    /// </summary>
+    /// <param name="notas">Lista de notas.</param>
+    public async void UpdateColor(int id, int color)
+    {
+        await this.InvokeAsync(async () =>
+        {
+
+            foreach (var note in Notes?.Models.Where(t => t.Id == id) ?? [])
+            {
+                note.Color = color;
+            }
+
+            StateHasChanged();
+
+            // Base de datos local.
+            var noteDB = new LocalDataBase.Data.NoteDB();
+
+            var md = Notes?.Models.Where(t => t.Id == id).FirstOrDefault();
+
+            await noteDB.Update(new()
+            {
+
+                IsDeleted = false,
+                Color = color,
+                Content = md.Content,
+                Id = id,
+                IsConfirmed = true,
+                Tittle = md.Tittle
+            });
+
+
+        });
+
     }
 
 

@@ -108,6 +108,7 @@ public partial class Login
         // Si hay sesión local.
         if (localSession != null)
         {
+
             // Generar.
             Session.GenerateLocal(new()
             {
@@ -127,6 +128,10 @@ public partial class Login
 
         if (accessType != NetworkAccess.Internet)
             return;
+
+
+      
+
 
 
         // Si no existe
@@ -250,7 +255,7 @@ public partial class Login
             case Responses.Success:
 
                 // Iniciar servicios de tiempo real.
-                // Services.Realtime.Start();
+                Services.Realtime.Start();
 
                 // Obtener local db.
                 LocalDataBase.Data.UserDB database = new();

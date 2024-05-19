@@ -42,6 +42,8 @@ public static class MauiProgram
         LIN.Access.Auth.Build.Init();
         LIN.Access.Notes.Build.Init();
 
+        LIN.Notes.Services.Realtime.Build();
+
         return builder.Build();
     }
 
