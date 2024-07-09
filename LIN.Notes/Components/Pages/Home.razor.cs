@@ -1,11 +1,12 @@
-﻿
-namespace LIN.Notes.Components.Pages;
+﻿namespace LIN.Notes.Components.Pages;
 
 
 public partial class Home : IDisposable
 {
 
     public static Home Instance { get; private set; }
+
+
     int Color = -1;
 
 
