@@ -12,15 +12,15 @@
 
 ## Características
 
-* Creación de Notas: Crea fácilmente nuevas notas con solo unos pocos clics o toques.
-* Sincronización: Sincroniza tus notas entre dispositivos Windows y Android para acceder a ellas en cualquier momento y en cualquier lugar.
-* Cambiar Colores: Personaliza el aspecto de tus notas cambiando los colores según tu preferencia.
-* Interfaz Intuitiva: Una interfaz de usuario simple y fácil de usar que hace que la gestión de notas sea rápida y eficiente.
-* Esta es una app Local First.
+* **Creación de Notas** Crea fácilmente nuevas notas con solo unos pocos clics o toques.
+* **Sincronización** Sincroniza tus notas entre dispositivos Windows y Android para acceder a ellas en cualquier momento y en cualquier lugar.
+* **Cambiar Colores** Personaliza el aspecto de tus notas cambiando los colores según tu preferencia.
+* **Interfaz Intuitiva** Una interfaz de usuario simple y fácil de usar que hace que la gestión de notas sea rápida y eficiente.
+* Esta es una app **Local First**.
 
 ## Capturas
 
-<img alt="heyform logo" height="30" src="./Img/android.png">
+<img alt="heyform logo" height="25" src="./Img/android.png">
 
 ### Modo Claro
 ![alt text](./Img/light.png)
@@ -31,7 +31,7 @@
 
 ## Capturas
 
-<img alt="heyform logo" height="30" src="./Img/computer.png">
+<img alt="heyform logo" height="25" src="./Img/computer.png">
 
 ### Modo Claro
 ![alt text](./Img/light_windows.png)
