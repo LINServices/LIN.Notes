@@ -1,1 +1,1 @@
-{"ConfigurationFile":"tailwind.config.js","InputCssFile":"wwwroot\\css\\app.css","OutputCssFile":"wwwroot\\css\\Tailwind.css"}
+{"ConfigurationFile":"tailwind.config.js","BuildFiles":[{"Input":"wwwroot\\css\\app.css","Output":"wwwroot\\css\\Tailwind.css"}],"UseCli":false}

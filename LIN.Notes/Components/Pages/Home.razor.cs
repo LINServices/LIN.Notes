@@ -389,7 +389,6 @@ public partial class Home : IDisposable
     /// <summary>
     /// Limpiar.
     /// </summary>
-    /// <param name="notas">Lista de notas.</param>
     public async void UpdateColor(int id, int color)
     {
         await this.InvokeAsync(async () =>
