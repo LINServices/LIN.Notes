@@ -3,8 +3,7 @@ using Android.Views;
 
 #endif
 using Microsoft.Extensions.Logging;
-using Plugin.Fingerprint;
-using Plugin.Fingerprint.Abstractions;
+using LIN.Access.Auth;
 
 namespace LIN.Notes;
 
@@ -28,18 +27,14 @@ public static class MauiProgram
 
         // Servicio blazor.
         builder.Services.AddMauiBlazorWebView();
-        
+        builder.Services.AddAuthenticationService();
+
         // Debug mode.
 #if DEBUG
         builder.Services.AddBlazorWebViewDeveloperTools();
         builder.Logging.AddDebug();
 #endif
 
-        // Establecer app.
-        LIN.Access.Auth.Build.SetAuth("DEFAULT");
-
-        // Servicios de acceso.
-        LIN.Access.Auth.Build.Init();
         LIN.Access.Notes.Build.Init();
 
         LIN.Notes.Services.Realtime.Build();

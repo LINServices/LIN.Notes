@@ -1,275 +1,145 @@
-﻿// Abre un Drawer
-function ShowDrawer(id, dotnetHelper, ...idCloseBtn) {
-
-    // Control
+﻿/**
+ * Abre un Drawer
+ * @param {string} id - El ID del elemento del Drawer.
+ * @param {object} dotnetHelper - El objeto DotNetHelper para invocar métodos de .NET.
+ * @param {...string} idCloseBtn - IDs de los botones que cierran el Drawer.
+ */
+function showDrawer(id, dotnetHelper, ...idCloseBtn) {
     const control = document.getElementById(id);
 
     const options = {
         placement: "bottom",
         backdropClasses: 'bg-zinc-900 bg-opacity-50 fixed inset-0 z-30',
-        onHide: () => {
-            dotnetHelper.invokeMethodAsync("OnHide");
-        },
-        onShow: () => {
-            dotnetHelper.invokeMethodAsync("OnShow");
-        }
+        onHide: () => dotnetHelper?.invokeMethodAsync("OnHide"),
+        onShow: () => dotnetHelper?.invokeMethodAsync("OnShow")
     };
 
-
     const drawer = new Drawer(control, options);
-
     drawer.show();
 
-    for (let i = 0; i < idCloseBtn.length; i++) {
-
-        try {
-
-            let closeButton = document.getElementById(idCloseBtn[i]);
-
-            closeButton.addEventListener("click", () => {
-
-                drawer.hide();
-
-            });
-        } catch {
-
+    idCloseBtn.forEach(closeBtnId => {
+        const closeButton = document.getElementById(closeBtnId);
+        if (closeButton) {
+            closeButton.addEventListener("click", () => drawer.hide());
         }
-
-    }
-
-}
-
-// Abre
-function ForceClick(id) {
-
-    const control = document.getElementById(id);
-    control.click();
+    });
 }
 
 
-function ShowPop(id, btn) {
-    // set the popover content element
-    const $targetEl = document.getElementById(id);
+/**
+ * Muestra un Popover
+ * @param {string} id - El ID del elemento del Popover.
+ * @param {string} btn - El ID del elemento que activa el Popover.
+ * @param {object} dotnetHelper - El objeto DotNetHelper para invocar métodos de .NET.
+ */
+function showPopover(id, btn, dotnetHelper) {
+    const targetEl = document.getElementById(id);
+    const triggerEl = document.getElementById(btn);
 
-    // set the element that trigger the popover using hover or click
-    const $triggerEl = document.getElementById(btn);
-
-    // options with default values
     const options = {
         placement: 'bottom',
         triggerType: 'hover',
         offset: 10,
-        onHide: () => {
-            console.log('popover is shown');
-        },
-        onShow: () => {
-            console.log('popover is hidden');
-        },
-        onToggle: () => {
-            console.log('popover is toggled');
-        }
+        onHide: () => dotnetHelper?.invokeMethodAsync("OnHide"),
+        onShow: () => dotnetHelper?.invokeMethodAsync("OnShow")
     };
 
-    const popover = new Popover($targetEl, $triggerEl, options);
-
-    popover.show();
+    new Popover(targetEl, triggerEl, options);
 }
 
 
-// Abre un
-
-// Abre
-function ShowModal(id, ...idCloseBtn) {
-
-    // Control
+/**
+ * Muestra un Modal
+ * @param {string} id - El ID del elemento del Modal.
+ * @param {object} dotnetHelper - El objeto DotNetHelper para invocar métodos de .NET.
+ * @param {...string} idCloseBtn - IDs de los botones que cierran el Modal.
+ */
+function showModal(id, dotnetHelper, ...idCloseBtn) {
     const control = document.getElementById(id);
 
-
-    // options with default values
     const options = {
         placement: 'center',
         backdrop: 'dynamic',
-        backdropClasses:
-            'bg-transparent fixed inset-0 z-40',
+        backdropClasses: 'bg-transparent fixed inset-0 z-40',
         closable: true,
-        onHide: () => {
-            console.log('modal is hidden');
-        },
-        onShow: () => {
-            console.log('modal is shown');
-        },
-        onToggle: () => {
-            console.log('modal has been toggled');
-        },
+        onHide: () => dotnetHelper?.invokeMethodAsync("OnHide"),
+        onShow: () => dotnetHelper?.invokeMethodAsync("OnShow")
     };
 
+    const modal = new Modal(control, options);
+    modal.show();
 
-    const drawer = new Modal(control, options);
-
-    // show the drawer
-    drawer.show();
-
-
-    for (let i = 0; i < idCloseBtn.length; i++) {
-
-        try {
-            let closeButton = document.getElementById(idCloseBtn[i]);
-
-
-            closeButton.addEventListener("click", () => {
-
-                drawer.hide();
-
-            });
-        } catch {
-
+    idCloseBtn.forEach(closeBtnId => {
+        const closeButton = document.getElementById(closeBtnId);
+        if (closeButton) {
+            closeButton.addEventListener("click", () => modal.hide());
         }
-
-    }
-
-
+    });
 }
 
 
-function OpenDropDown(id, idOpen, ...idCloseBtn) {
+/**
+ * Abre un Dropdown
+ * @param {string} id - El ID del elemento del Dropdown.
+ * @param {string} idOpen - El ID del elemento que activa el Dropdown.
+ * @param {object} dotnetHelper - El objeto DotNetHelper para invocar métodos de .NET.
+ * @param {...string} idCloseBtn - IDs de los botones que cierran el Dropdown.
+ */
+function openDropDown(id, idOpen, dotnetHelper, ...idCloseBtn) {
+    const targetEl = document.getElementById(id);
+    const triggerEl = document.getElementById(idOpen);
 
-
-    // set the target element that will be collapsed or expanded (eg. navbar menu)
-    const $targetEl = document.getElementById(id);
-    const $targetEl2 = document.getElementById(idOpen);
-
-    // options with default values
     const options = {
         placement: 'bottom',
         triggerType: 'click',
         offsetSkidding: 0,
         offsetDistance: 10,
         delay: 100,
-        onHide: () => {
-            console.log('dropdown has been hidden');
-        },
-        onShow: () => {
-            console.log('dropdown has been shown');
-        },
-        onToggle: () => {
-            console.log('dropdown has been toggled');
-        }
+        onHide: () => dotnetHelper?.invokeMethodAsync("OnHide"),
+        onShow: () => dotnetHelper?.invokeMethodAsync("OnShow")
     };
 
-    let collapse = new Dropdown($targetEl, $targetEl2, options);
+    const dropdown = new Dropdown(targetEl, triggerEl, options);
 
-
-    for (let i = 0; i < idCloseBtn.length; i++) {
-
-        try {
-            let closeButton = document.getElementById(idCloseBtn[i]);
-
-
-            closeButton.addEventListener("click", () => {
-
-                collapse.hide();
-
-            });
-        } catch {
-
+    idCloseBtn.forEach(closeBtnId => {
+        const closeButton = document.getElementById(closeBtnId);
+        if (closeButton) {
+            closeButton.addEventListener("click", () => dropdown.hide());
         }
+    });
 
-    }
-
-
-    // show the target element
-    collapse.toggle();
-
-
+    dropdown.toggle();
 }
 
 
-function E() {
+/**
+ * Abre un Dropdown específico para el usuario
+ */
+function showUserDropdown(dotnetHelper) {
+    const targetEl = document.getElementById('user-dropdown');
+    const triggerEl = document.getElementById('user-menu-button');
 
-
-    // set the target element that will be collapsed or expanded (eg. navbar menu)
-    const $targetEl = document.getElementById('user-dropdown');
-
-    const $targetEl2 = document.getElementById('user-menu-button');
-
-
-    // options with default values
     const options = {
         placement: 'bottom',
         triggerType: 'click',
         offsetSkidding: 0,
         offsetDistance: 10,
         delay: 100,
-        onHide: () => {
-            console.log('dropdown has been hidden');
-        },
-        onShow: () => {
-            console.log('dropdown has been shown');
-        },
-        onToggle: () => {
-            console.log('dropdown has been toggled');
-        }
+        onHide: () => dotnetHelper?.invokeMethodAsync("OnHide"),
+        onShow: () => dotnetHelper?.invokeMethodAsync("OnShow"),
+        onToggle: () => dotnetHelper?.invokeMethodAsync("OnToggle")
     };
 
-    let collapse = new Dropdown($targetEl, $targetEl2, options);
+    const dropdown = new Dropdown(targetEl, triggerEl, options);
+    dropdown.toggle();
+}
 
-    // show the target element
+
+/**
+ * Abre o cierra el menú móvil
+ */
+function toggleMobileMenu() {
+    const targetEl = document.getElementById('mobile-menu-2');
+    const collapse = new Collapse(targetEl, targetEl);
     collapse.toggle();
-
-
-}
-
-
-function I() {
-
-
-    // set the target element that will be collapsed or expanded (eg. navbar menu)
-    const $targetEl = document.getElementById('mobile-menu-2');
-
-
-    const collapse1 = new Collapse($targetEl, $targetEl);
-
-    // show the target element
-    collapse1.toggle();
-
-}
-
-
-function ShopPop(target, trigger) {
-
-
-    console.log('Target: ' + target);
-    console.log('Trigger: ' + trigger);
-
-    // set the popover content element
-    const $targetEl = document.getElementById(target);
-
-    // set the element that trigger the popover using hover or click
-    const $triggerEl = document.getElementById(trigger);
-
-    // options with default values
-    const options = {
-        placement: 'bottom',
-        triggerType: 'hover',
-        offset: 10,
-        onHide: () => {
-            console.log('popover is shown');
-        },
-        onShow: () => {
-            console.log('popover is hidden');
-        },
-        onToggle: () => {
-            console.log('popover is toggled');
-        }
-    };
-
-
-    const popover = new Popover($targetEl, $triggerEl, options);
-
-
-}
-
-
-function BackLast() {
-    history.back();
 }

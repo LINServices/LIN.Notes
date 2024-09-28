@@ -154,7 +154,7 @@
             else if (Section == 1)
             {
                 <div class="flex items-center justify-center">
-                    <LIN.Notes.Components.Elements.Success />
+                    <Success />
                 </div>
             }
 
@@ -162,7 +162,7 @@
             else if (Section == 2)
             {
                 <div class="flex flex-col items-center justify-center">
-                    <LIN.Notes.Components.Elements.Failure />
+                    <Failure />
                     <label class="text-red-500">@ErrorMessage</label>
                 </div>
             }
@@ -172,7 +172,7 @@
             {
 
                 <div class="flex flex-col items-center justify-center">
-                    <LIN.Notes.Components.Elements.Loader />
+                    <Loader />
                     <h5 class="mt-2 text-sm font-bold text-gray-600 dark:text-gray-300">@LogMessage</h5>
                     @if (ShowButtonCancel)
                     {

@@ -15,7 +15,7 @@
             <div class="bg-yellow-400/30 flex w-max items-center gap-1 rounded-full pr-4 dark:bg-yellow-500/20">
 
                 @* Perfil. *@
-               <LIN.Notes.Components.Elements.PopSession OnClick="CloseSession" />
+               <PopSession OnClick="CloseSession" />
                 
                 <label class="font-medium text-zinc-900 dark:text-zinc-300">@LIN.Access.Notes.Session.Instance.Account.Name</label>
             </div>
@@ -70,7 +70,7 @@
             @if (Notes == null)
             {
                 <div class="col-span-2 flex w-full justify-center p-4 md:col-span-4">
-                    <LIN.Notes.Components.Elements.Loader />
+                    <Loader />
                 </div>
             }
             else
@@ -89,7 +89,7 @@
                     @* Control de notas. *@
                     @foreach(var e in Notes.Models.Where(t=>t.Color == Color || Color == -1))
                     {
-                        <LIN.Notes.Components.Shared.NoteControl Note="e" OnClick="Go" />
+                        <NoteControl Note="e" OnClick="Go" />
                     }
                     
                 }
@@ -104,4 +104,4 @@
 
 
 @* Navegación inferior. *@
-<LIN.Notes.Components.Elements.BottomNavigation OnClick="Create" />
+<BottomNavigation OnClick="Create" />

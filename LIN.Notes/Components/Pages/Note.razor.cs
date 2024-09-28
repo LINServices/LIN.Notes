@@ -1,4 +1,6 @@
-﻿namespace LIN.Notes.Components.Pages;
+﻿using LIN.Notes.Shared.Modals;
+
+namespace LIN.Notes.Components.Pages;
 
 
 public partial class Note
@@ -36,7 +38,7 @@ public partial class Note
 
 
 
-    LIN.Notes.Components.Elements.DeletePopup DeletePop { get; set; }
+    DeleteModal DeletePop { get; set; }
 
 
 
@@ -68,7 +70,7 @@ public partial class Note
     /// <summary>
     /// Volver a atrás.
     /// </summary>
-    void Back() => JS.InvokeVoidAsync("BackLast");
+    void Back() => JS.InvokeVoidAsync("backLast");
 
 
 
@@ -256,10 +258,15 @@ public partial class Note
         // ELiminar en local.
         await localDataBase.DeleteOne(NoteDataModel.Id, response.Response == Responses.Success);
 
+        if (response.Response == Responses.Success)
+        {
+            Home.Notes?.Models.RemoveAll(t => t.Id == NoteDataModel.Id);
+            NavigationManager.NavigateTo("Home");
+            StateHasChanged();
+        }
 
-        Home.Notes?.Models.RemoveAll(t => t.Id == NoteDataModel.Id);
-        NavigationManager.NavigateTo("Home");
-        StateHasChanged();
+        // Mostrar error
+
 
     }
 
@@ -319,7 +326,7 @@ public partial class Note
             // Si esta confirmado.
             if (isConfirmed)
                 NoteDataModel.Id = isCreated;
-            
+
             // Agregar al home.
             Home.Notes?.Models.Add(NoteDataModel);
 
