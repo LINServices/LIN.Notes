@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-    content: ["../**/*{html,razor,js,cs}"],
+    content: ["../**/*{html,razor,js,cs}", "D:/LIN Services/Components/LIN.Notes.Shared/**/*{html,razor,js,cs}"],
     theme: {
         screens: {
             'sm': '640px',

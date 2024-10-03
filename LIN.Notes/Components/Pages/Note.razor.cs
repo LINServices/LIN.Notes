@@ -38,7 +38,7 @@ public partial class Note
 
 
 
-    DeleteModal DeletePop { get; set; }
+    private DeleteModal DeletePop { get; set; }
 
 
 
@@ -70,14 +70,14 @@ public partial class Note
     /// <summary>
     /// Volver a atrás.
     /// </summary>
-    void Back() => JS.InvokeVoidAsync("backLast");
+    private void Back() => JS.InvokeVoidAsync("backLast");
 
 
 
     /// <summary>
     /// Establecer el nuevo color.
     /// </summary>
-    void SetColor()
+    private void SetColor()
     {
         GetClass();
     }
@@ -87,7 +87,7 @@ public partial class Note
     /// <summary>
     /// Obtener las clases.
     /// </summary>
-    string GetClass()
+    private string GetClass()
     {
         switch (NoteDataModel?.Color)
         {
@@ -115,7 +115,7 @@ public partial class Note
     /// <summary>
     /// Input.
     /// </summary>
-    async void Input(Microsoft.AspNetCore.Components.ChangeEventArgs e)
+    private async void Input(Microsoft.AspNetCore.Components.ChangeEventArgs e)
     {
 
 
@@ -138,10 +138,9 @@ public partial class Note
 
     }
 
-    int c = 0;
+    private int c = 0;
 
-
-    async void InputTittle(Microsoft.AspNetCore.Components.ChangeEventArgs e)
+    private async void InputTittle(Microsoft.AspNetCore.Components.ChangeEventArgs e)
     {
 
 
@@ -166,10 +165,7 @@ public partial class Note
         await Save();
     }
 
-
-
-
-    static async Task<int> Create(NoteDataModel model)
+    private static async Task<int> Create(NoteDataModel model)
     {
 
         // Acceso.
@@ -198,9 +194,7 @@ public partial class Note
 
     }
 
-
-
-    async void SetNewColor(int color)
+    private async void SetNewColor(int color)
     {
 
         if (NoteDataModel == null)
@@ -235,8 +229,7 @@ public partial class Note
 
     }
 
-
-    async void Delete()
+    private async void Delete()
     {
         if (NoteDataModel == null)
             return;
@@ -270,9 +263,7 @@ public partial class Note
 
     }
 
-
-
-    bool IsSaving = false;
+    private bool IsSaving = false;
 
     /// <summary>
     /// Guardar los cambios.
@@ -298,7 +289,12 @@ public partial class Note
 
         // Respuesta de la API.
         if (NoteDataModel.Id > 0)
-            response = await Access.Notes.Controllers.Notes.Update(NoteDataModel, Session.Instance.Token);
+        {
+            var responseUpdate = await Access.Notes.Controllers.Notes.Update(NoteDataModel, Session.Instance.Token);
+            NoteDataModel.Language = responseUpdate.Model;
+            response = responseUpdate;
+        }
+
 
         // Crear local.
         else if (NoteDataModel.Id == 0)
@@ -325,7 +321,11 @@ public partial class Note
 
             // Si esta confirmado.
             if (isConfirmed)
+            {
                 NoteDataModel.Id = isCreated;
+                var lang = await LIN.Access.Notes.Controllers.Notes.ReadLang(isCreated, Session.Instance.Token);
+                NoteDataModel.Language = lang.Model;
+            }
 
             // Agregar al home.
             Home.Notes?.Models.Add(NoteDataModel);
@@ -342,6 +342,7 @@ public partial class Note
             Content = NoteDataModel.Content,
             Id = NoteDataModel.Id,
             Tittle = NoteDataModel.Tittle,
+            Language = (int)NoteDataModel.Language,
             IsConfirmed = response.Response == Responses.Success,
         });
 

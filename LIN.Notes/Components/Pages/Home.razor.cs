@@ -1,4 +1,6 @@
-﻿namespace LIN.Notes.Components.Pages;
+﻿using LIN.Types.Enumerations;
+
+namespace LIN.Notes.Components.Pages;
 
 
 public partial class Home : IDisposable
@@ -6,8 +8,7 @@ public partial class Home : IDisposable
 
     public static Home Instance { get; private set; }
 
-
-    int Color = -1;
+    private int Color = -1;
 
 
     /// <summary>
@@ -150,7 +151,8 @@ public partial class Home : IDisposable
                 Color = t.Color,
                 Content = t.Content,
                 Id = t.Id,
-                Tittle = t.Tittle
+                Tittle = t.Tittle,
+                Language = (Languages)t.Language
             }).ToList()
         };
 
@@ -231,9 +233,7 @@ public partial class Home : IDisposable
     /// </summary>
     private void Create() => Go(new());
 
-
-
-    bool IsClean = false;
+    private bool IsClean = false;
 
 
     /// <summary>
@@ -301,6 +301,11 @@ public partial class Home : IDisposable
                     // Establecer el nuevo Id.
                     newModel.Id = response.LastID;
 
+                    // Obtener idioma.
+                    var lang = await Access.Notes.Controllers.Notes.ReadLang(response.LastID, Session.Instance.Token);
+
+                    newModel.Language = lang.Model;
+
                     // Agregar a lista local.
                     Notes?.Models.Add(newModel);
 
@@ -340,7 +345,6 @@ public partial class Home : IDisposable
 
         }
 
-
         // Guardar en la base de datos local.
         await noteDB.Save(notas.Select(t => new LocalDataBase.Models.Note
         {
@@ -348,7 +352,8 @@ public partial class Home : IDisposable
             Content = t.Content,
             Id = t.Id,
             Tittle = t.Tittle,
-            IsConfirmed = true
+            IsConfirmed = true,
+            Language = (int)t.Language
         }).ToList());
 
         // Establecer nuevo estado.
@@ -437,10 +442,7 @@ public partial class Home : IDisposable
 
     }
 
-
-
-
-    void SetColor(int color)
+    private void SetColor(int color)
     {
         Color = color;
         InvokeAsync(StateHasChanged);
