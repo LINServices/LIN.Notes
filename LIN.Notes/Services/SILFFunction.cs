@@ -1,13 +1,8 @@
-﻿using SILF.Script.Elements.Functions;
+﻿using SILF.Script;
 using SILF.Script.Elements;
+using SILF.Script.Elements.Functions;
 using SILF.Script.Interfaces;
 using SILF.Script.Runtime;
-using SILF.Script;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LIN.Notes.Services;
 

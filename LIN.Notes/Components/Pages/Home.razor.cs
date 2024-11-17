@@ -14,7 +14,7 @@ public partial class Home : IDisposable
     /// <summary>
     /// Notas actuales.
     /// </summary>
-    public static ReadAllResponse<NoteDataModel>? Notes { get; set; }
+    public static (List<NoteDataModel> Models, Responses Response)? Notes { get; set; }
 
 
 
@@ -97,7 +97,6 @@ public partial class Home : IDisposable
             return;
         }
 
-
         // La sesión es local.
         if (Session.Instance.Type == SessionType.Local)
         {
@@ -112,7 +111,6 @@ public partial class Home : IDisposable
             await Start(user?.Unique ?? "", user?.Password ?? "");
 
         }
-
 
         // Refrescar datos.
         _ = InvokeAsync(() => RefreshData(true));
@@ -165,16 +163,17 @@ public partial class Home : IDisposable
             // Obtener desde la API.
             items = await Access.Notes.Controllers.Notes.ReadAll(LIN.Access.Notes.Session.Instance.Token);
 
+            // Notas.
+            var notes = items.Models.ToList();
+
             // Fue correcto.
             if (items.Response == Responses.Success)
-                CreateAndUpdate(items.Models);
+                CreateAndUpdate(notes);
 
             // Rellena los items
-            Notes = items;
+            Notes = (notes, items.Response);
 
         }
-
-
 
         // Actualizar pantalla.
         _ = InvokeAsync(StateHasChanged);
@@ -376,7 +375,8 @@ public partial class Home : IDisposable
         await this.InvokeAsync(async () =>
          {
 
-             Notes?.Models.RemoveAll(t => t.Id == id);
+             Notes.Value.Models.RemoveAll(t => t.Id == id);
+
              StateHasChanged();
 
              // Base de datos local.
@@ -429,16 +429,65 @@ public partial class Home : IDisposable
 
 
 
+    public async void Update(int id, string content)
+    {
+        await this.InvokeAsync(async () =>
+        {
+
+            foreach (var note in Notes?.Models.Where(t => t.Id == id) ?? [])
+            {
+                note.Content = content;
+            }
+
+            StateHasChanged();
+
+            // Base de datos local.
+            var noteDB = new LocalDataBase.Data.NoteDB();
+
+            var md = Notes?.Models.Where(t => t.Id == id).FirstOrDefault();
+
+            await noteDB.Update(new()
+            {
+
+                IsDeleted = false,
+                Color = md.Color,
+                Content = content,
+                Id = id,
+                IsConfirmed = true,
+                Tittle = md.Tittle
+            });
+
+
+        });
+
+    }
+
+
+    public static bool HaveAuthError { get; set; } = false;
+
+
     /// <summary>
     /// Iniciar sesión de servidor.
     /// </summary>
     /// <param name="user">Usuario.</param>
     /// <param name="password">Contraseña.</param>
-    private static async Task Start(string user, string password)
+    private async Task Start(string user, string password)
     {
 
         // Iniciar sesión.
-        var (_, _) = await LIN.Access.Notes.Session.LoginWith(user, password, true);
+        var (_, response) = await LIN.Access.Notes.Session.LoginWith(user, password, true);
+
+        switch (response)
+        {
+            case Responses.Success:
+                break;
+            case Responses.Unauthorized:
+                HaveAuthError = true;
+                break;
+        }
+
+        StateHasChanged();
+
 
     }
 

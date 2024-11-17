@@ -7,3 +7,4 @@ global using LIN.Access.Auth.Hubs;
 global using Microsoft.JSInterop;
 global using LIN.Access.Notes;
 global using LIN.Types.Notes.Models;
+global using LIN.Notes.Shared.Modals;

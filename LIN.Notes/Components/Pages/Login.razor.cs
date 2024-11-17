@@ -1,6 +1,5 @@
 ﻿namespace LIN.Notes.Components.Pages;
 
-
 public partial class Login
 {
 
@@ -276,6 +275,9 @@ public partial class Login
 
             // Contraseña incorrecta.
             case Responses.InvalidPassword:
+
+                Home.HaveAuthError = true;  
+
                 ShowError("La contraseña es incorrecta");
                 break;
 
