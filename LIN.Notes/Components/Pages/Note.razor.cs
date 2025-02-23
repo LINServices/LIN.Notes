@@ -1,6 +1,4 @@
-﻿using System.Diagnostics.Metrics;
-
-namespace LIN.Notes.Components.Pages;
+﻿namespace LIN.Notes.Components.Pages;
 
 public partial class Note
 {

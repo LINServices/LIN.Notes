@@ -1,10 +1,11 @@
 ﻿@page "/"
+@inject NavigationManager NavigationManager
 
 @* Propiedades *@
 <PageTitle>Iniciar Sesión</PageTitle>
 
 @* Pantalla *@
-<div class="grid-cols-1 px-[-20px] grid max-h-dvh min-h-dvh w-full dl:grid-cols-2">
+<div class="px-[-20px] grid max-h-dvh min-h-dvh w-full grid-cols-1 dl:grid-cols-2">
 
     @* Contenido *@
     <div class="flex w-full items-center justify-center p-3">
@@ -16,7 +17,7 @@
             @if (Section == 0)
             {
                 @*Contenedor*@
-                <div class="z-10 flex-1 relative flex flex-col px-4 py-10 sm:justify-center md:flex-none md:px-28">
+                <div class="relative z-10 flex flex-1 flex-col px-4 py-10 sm:justify-center md:flex-none md:px-28">
                     <div class="mx-auto w-full max-w-md sm:px-4 md:w-96 md:max-w-sm md:px-0">
 
                         @* Header *@
@@ -28,7 +29,7 @@
                                 <img class="self-center" src="./favicon.png" style="height:30px; width: 30px" />
                                 <label class="ml-3 self-center text-xl font-bold dark:text-gray-200">
                                     LIN
-                                    <span class="bg-gradient-to-r from-current-500 to-current-500 bg-clip-text text-transparent">
+                                    <span class="bg-gradient-to-r text-transparent from-current-500 to-current-500 bg-clip-text">
                                         Notes
                                     </span>
                                 </label>
@@ -63,7 +64,7 @@
                         </div>
 
                         @* Cuerpo *@
-                        <div class="grid-cols-1 mt-6 grid gap-4">
+                        <div class="mt-6 grid grid-cols-1 gap-4">
 
 
                             @*Usuario*@
@@ -72,7 +73,7 @@
                                     Usuario
                                 </label>
                                 <input @onkeypress="HideError" @bind="User" type="text" autocomplete="off" required=""
-                                       class="block w-full appearance-none rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-1 focus:border-current-500 focus:bg-white focus:outline-none focus:ring-current-500 dark:bg-zinc-900 dark:text-zinc-200 dark:border-zinc-700 sm:text-sm dark:focus:bg-zinc-900">
+                                       class="placeholder-gray-400 block w-full appearance-none rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-gray-900 focus:ring-1 focus:border-current-500 focus:bg-white focus:outline-none focus:ring-current-500 sm:text-sm dark:bg-zinc-900 dark:text-zinc-200 dark:border-zinc-700 dark:focus:bg-zinc-900">
                             </div>
 
 
@@ -87,7 +88,7 @@
                                     <input @onkeypress="HideError"
                                            @bind="                                                Password" type="password"
                                            autocomplete="off"
-                                           class="block w-full appearance-none rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-gray-900 placeholder-gray-400 focus:ring-1 focus:border-current-500 focus:bg-white focus:outline-none focus:ring-current-500 dark:bg-zinc-900 dark:text-zinc-200 dark:border-zinc-700 sm:text-sm dark:focus:bg-zinc-900">
+                                           class="placeholder-gray-400 block w-full appearance-none rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-gray-900 focus:ring-1 focus:border-current-500 focus:bg-white focus:outline-none focus:ring-current-500 sm:text-sm dark:bg-zinc-900 dark:text-zinc-200 dark:border-zinc-700 dark:focus:bg-zinc-900">
                                 </div>
                             }
 

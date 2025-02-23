@@ -18,7 +18,6 @@ public partial class Home : IDisposable
     public static (List<NoteDataModel> Models, Responses Response)? Notes { get; set; }
 
 
-
     /// <summary>
     /// Constructor.
     /// </summary>
@@ -37,7 +36,7 @@ public partial class Home : IDisposable
         Connectivity.ConnectivityChanged += OnConnectivityChanged;
 
         // Evento al actualizar la sesión.
-      //  LIN.Access.Notes.Observers.SessionObserver.OnUpdate += OnUpdateSession;
+        LIN.Access.Notes.Observers.SessionObserver.OnUpdate += OnUpdateSession;
 
         Instance = this;
     }
@@ -64,7 +63,6 @@ public partial class Home : IDisposable
     /// </summary>
     private async void Load()
     {
-
         try
         {
             // Rellena los datos
@@ -162,7 +160,7 @@ public partial class Home : IDisposable
         {
 
             // Obtener desde la API.
-            items = await Access.Notes.Controllers.Notes.ReadAll(LIN.Access.Notes.SessionManager.Instance.Default.Token);
+            items = await Access.Notes.Controllers.Notes.ReadAll(SessionManager.Instance.Default.Token);
 
             // Notas.
             var notes = items.Models.ToList();
@@ -412,6 +410,9 @@ public partial class Home : IDisposable
 
             var md = Notes?.Models.Where(t => t.Id == id).FirstOrDefault();
 
+            if (md is null)
+                return;
+
             await noteDB.Update(new()
             {
 
@@ -447,9 +448,11 @@ public partial class Home : IDisposable
 
             var md = Notes?.Models.Where(t => t.Id == id).FirstOrDefault();
 
+            if (md is null)
+                return;
+
             await noteDB.Update(new()
             {
-
                 IsDeleted = false,
                 Color = md.Color,
                 Content = content,

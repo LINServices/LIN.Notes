@@ -41,7 +41,7 @@
     <MauiIcon Include="Resources\AppIcon\appiconwin.svg" ForegroundFile="Resources\AppIcon\appiconfgwin.svg" Color="#00FF0000" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="LIN.Access.Notes" Version="1.6.1" />
+    <PackageReference Include="LIN.Access.Notes" Version="1.6.3" />
     <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.40" />
     <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="9.0.40" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="9.0.40" />

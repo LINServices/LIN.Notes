@@ -6,13 +6,6 @@ public partial class Login
 {
 
     /// <summary>
-    /// Navegación.
-    /// </summary>
-    [Inject]
-    private NavigationManager? NavigationManager { get; set; }
-
-
-    /// <summary>
     /// Obtiene si se esta log con una llave de acceso
     /// </summary>
     private bool IsWithKey { get; set; } = false;
@@ -81,21 +74,11 @@ public partial class Login
     /// </summary>
     private PassKeyHub? hub = null;
 
-
-
-
     /// <summary>
     /// Evento.
     /// </summary>
     protected override async Task OnInitializedAsync()
     {
-
-        // Validar sesión activa.
-        if (Access.Auth.SessionAuth.IsOpen)
-        {
-            NavigationManager?.NavigateTo("/home");
-            return;
-        }
 
         // Base de datos local.
         LocalDataBase.Data.UserDB database = new();
@@ -110,8 +93,6 @@ public partial class Login
         if (localSession != null)
         {
 
-
-
             // Generar.
             SessionManager.Instance.GenerateLocal(new()
             {
@@ -122,6 +103,7 @@ public partial class Login
                 },
                 Id = localSession.Id
             }, (accessType == NetworkAccess.Internet ? SessionType.Sync : SessionType.Local));
+
             SessionManager.Instance.SetDefault(SessionManager.Instance.Sessions[0]);
 
             // Navegar.
@@ -241,8 +223,17 @@ public partial class Login
             return;
         }
 
-        // Iniciar sesión.
-        var (session, response) = await SessionManager.Instance.StarSession(User, Password, safe: true);
+        var session = SessionManager.Instance.Default;
+        Responses response = Responses.Undefined;
+
+        if (session is null)
+        {
+            (session, response) = await SessionManager.Instance.StarSession(User, Password, safe: true);
+        }
+        else
+        {
+            response = await session.LoginWith(User, Password, safe: true);
+        }
 
         // Validar respuesta.
         switch (response)
@@ -274,7 +265,6 @@ public partial class Login
             case Responses.InvalidPassword:
 
                 Home.HaveAuthError = true;
-
                 ShowError("La contraseña es incorrecta");
                 break;
 
