@@ -192,10 +192,10 @@ public partial class Note
                 Content = model.Content,
                 Tittle = model.Tittle
             },
-            Session.Instance.Token);
+            SessionManager.Instance.Default.Token);
 
             // Respuesta.
-            return (response.Response == Responses.Success) ? response.LastID : 0;
+            return (response.Response == Responses.Success) ? response.LastId : 0;
         }
 
         return 0;
@@ -224,7 +224,7 @@ public partial class Note
 
 
         if (NoteDataModel.Id > 0)
-            response = await LIN.Access.Notes.Controllers.Notes.Update(NoteDataModel.Id, color, Session.Instance.Token);
+            response = await LIN.Access.Notes.Controllers.Notes.Update(NoteDataModel.Id, color, SessionManager.Instance.Default.Token);
 
 
         var db = new LocalDataBase.Data.NoteDB();
@@ -262,7 +262,7 @@ public partial class Note
 
         // Respuesta de la API.
         if (NoteDataModel.Id > 0)
-            response = await LIN.Access.Notes.Controllers.Notes.Delete(NoteDataModel.Id, Session.Instance.Token);
+            response = await LIN.Access.Notes.Controllers.Notes.Delete(NoteDataModel.Id, SessionManager.Instance.Default.Token);
 
         // ELiminar en local.
         await localDataBase.DeleteOne(NoteDataModel.Id, response.Response == Responses.Success);
@@ -306,7 +306,7 @@ public partial class Note
         // Si la nota ya existe, la actualiza.
         if (NoteDataModel.Id > 0)
         {
-            var responseUpdate = await Access.Notes.Controllers.Notes.Update(NoteDataModel, Session.Instance.Token);
+            var responseUpdate = await Access.Notes.Controllers.Notes.Update(NoteDataModel, SessionManager.Instance.Default.Token);
             NoteDataModel.Language = responseUpdate.Model;
             response = responseUpdate;
         }
@@ -338,7 +338,7 @@ public partial class Note
             if (isConfirmed)
             {
                 NoteDataModel.Id = isCreated;
-                var lang = await LIN.Access.Notes.Controllers.Notes.ReadLang(isCreated, Session.Instance.Token);
+                var lang = await LIN.Access.Notes.Controllers.Notes.ReadLang(isCreated, SessionManager.Instance.Default.Token);
                 NoteDataModel.Language = lang.Model;
             }
 

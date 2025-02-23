@@ -34,8 +34,7 @@ public static class MauiProgram
         builder.Services.AddBlazorWebViewDeveloperTools();
         builder.Logging.AddDebug();
 #endif
-
-        LIN.Access.Notes.Build.Init();
+        builder.Services.AddNotesService();
 
         LIN.Notes.Services.Realtime.Build();
 

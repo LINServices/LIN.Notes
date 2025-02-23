@@ -1,4 +1,6 @@
-﻿namespace LIN.Notes.Components.Pages;
+﻿using LIN.Access.Notes.Sessions;
+
+namespace LIN.Notes.Components.Pages;
 
 public partial class Login
 {
@@ -108,30 +110,26 @@ public partial class Login
         if (localSession != null)
         {
 
+
+
             // Generar.
-            Session.GenerateLocal(new()
+            SessionManager.Instance.GenerateLocal(new()
             {
                 Name = localSession.Name,
                 Identity = new()
                 {
                     Unique = localSession.Unique
                 },
-                Id = localSession.Id,
-                Profile = localSession.Profile
+                Id = localSession.Id
             }, (accessType == NetworkAccess.Internet ? SessionType.Sync : SessionType.Local));
+            SessionManager.Instance.SetDefault(SessionManager.Instance.Sessions[0]);
 
             // Navegar.
             NavigationManager?.NavigateTo("/home");
         }
 
-
         if (accessType != NetworkAccess.Internet)
             return;
-
-
-      
-
-
 
         // Si no existe
         if (localSession == null)
@@ -244,10 +242,10 @@ public partial class Login
         }
 
         // Iniciar sesión.
-        var (Session, Response) = await LIN.Access.Notes.Session.LoginWith(User, Password, true);
+        var (session, response) = await SessionManager.Instance.StarSession(User, Password, safe: true);
 
         // Validar respuesta.
-        switch (Response)
+        switch (response)
         {
 
             // Correcto.
@@ -262,10 +260,9 @@ public partial class Login
                 // Guardar información.
                 await database.SaveUser(new()
                 {
-                    Id = Session!.Account.Id,
-                    Unique = Session!.Account.Identity.Unique,
-                    Name = Session.Account.Name,
-                    Profile = Session!.Account.Profile,
+                    Id = session!.Account.Id,
+                    Unique = session!.Account.Identity.Unique,
+                    Name = session.Account.Name,
                     Password = Password
                 });
 
@@ -276,7 +273,7 @@ public partial class Login
             // Contraseña incorrecta.
             case Responses.InvalidPassword:
 
-                Home.HaveAuthError = true;  
+                Home.HaveAuthError = true;
 
                 ShowError("La contraseña es incorrecta");
                 break;
@@ -401,7 +398,7 @@ public partial class Login
         UpdateSection(1);
 
         // Generar login.
-        var logIn = Access.Notes.Session.LoginWith(e.Token);
+        var logIn = SessionManager.Instance.StarSession(e.Token);
 
         // Esperar 4 segundos.
         await Task.Delay(4000);

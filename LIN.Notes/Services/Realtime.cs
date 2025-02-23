@@ -46,7 +46,7 @@ internal class Realtime
             DeviceKey = Guid.NewGuid().ToString();
 
         // Generar nuevo hub.
-        NotesHub = new(Session.Instance.Token);
+        NotesHub = new(SessionManager.Instance.Default.Token);
 
         _ = NotesHub.Suscribe();
 
@@ -106,7 +106,7 @@ internal class Realtime
             int id = (int)((value as decimal?) ?? 0);
 
 
-            var x = await LIN.Access.Notes.Controllers.Notes.Read(id, LIN.Access.Notes.Session.Instance.Token);
+            var x = await LIN.Access.Notes.Controllers.Notes.Read(id, SessionManager.Instance.Default.Token);
 
             if (x.Response != Responses.Success)
                 return;

@@ -1,4 +1,5 @@
-﻿using LIN.Types.Enumerations;
+﻿using LIN.Access.Notes.Sessions;
+using LIN.Types.Enumerations;
 
 namespace LIN.Notes.Components.Pages;
 
@@ -36,7 +37,7 @@ public partial class Home : IDisposable
         Connectivity.ConnectivityChanged += OnConnectivityChanged;
 
         // Evento al actualizar la sesión.
-        LIN.Access.Notes.Observers.SessionObserver.OnUpdate += OnUpdateSession;
+      //  LIN.Access.Notes.Observers.SessionObserver.OnUpdate += OnUpdateSession;
 
         Instance = this;
     }
@@ -90,7 +91,7 @@ public partial class Home : IDisposable
         if (e.NetworkAccess != NetworkAccess.Internet)
         {
             // Establecer la sesión como local.
-            Session.Instance.Type = SessionType.Local;
+            SessionManager.Instance.Default.Type = SessionType.Local;
 
             // Actualizar la pantalla.
             _ = InvokeAsync(StateHasChanged);
@@ -98,7 +99,7 @@ public partial class Home : IDisposable
         }
 
         // La sesión es local.
-        if (Session.Instance.Type == SessionType.Local)
+        if (SessionManager.Instance.Default.Type == SessionType.Local)
         {
 
             // Base de datos local.
@@ -138,7 +139,7 @@ public partial class Home : IDisposable
         // Obtiene la conectividad actual.
         NetworkAccess accessType = Connectivity.Current.NetworkAccess;
 
-        var x = Session.Instance.Account;
+        var x = SessionManager.Instance.Default.Account;
 
         // Cargar notas locales.
         Notes = new()
@@ -157,11 +158,11 @@ public partial class Home : IDisposable
         _ = InvokeAsync(StateHasChanged);
 
         // Si tiene acceso a internet.
-        if (Session.Instance.Type == SessionType.Connected && accessType == NetworkAccess.Internet)
+        if (SessionManager.Instance.Default.Type == SessionType.Connected && accessType == NetworkAccess.Internet)
         {
 
             // Obtener desde la API.
-            items = await Access.Notes.Controllers.Notes.ReadAll(LIN.Access.Notes.Session.Instance.Token);
+            items = await Access.Notes.Controllers.Notes.ReadAll(LIN.Access.Notes.SessionManager.Instance.Default.Token);
 
             // Notas.
             var notes = items.Models.ToList();
@@ -263,7 +264,7 @@ public partial class Home : IDisposable
             if (note.IsDeleted && note.Id > 0)
             {
                 // Solicitud a la API.
-                var response = await Access.Notes.Controllers.Notes.Delete(note.Id, Session.Instance.Token);
+                var response = await Access.Notes.Controllers.Notes.Delete(note.Id, SessionManager.Instance.Default.Token);
 
                 if (response.Response == Responses.Success)
                 {
@@ -292,16 +293,16 @@ public partial class Home : IDisposable
                 };
 
                 // Enviar a la API.
-                var response = await Access.Notes.Controllers.Notes.Create(newModel, Session.Instance.Token);
+                var response = await Access.Notes.Controllers.Notes.Create(newModel, SessionManager.Instance.Default.Token);
 
                 // Validar.
                 if (response.Response == Responses.Success)
                 {
                     // Establecer el nuevo Id.
-                    newModel.Id = response.LastID;
+                    newModel.Id = response.LastId;
 
                     // Obtener idioma.
-                    var lang = await Access.Notes.Controllers.Notes.ReadLang(response.LastID, Session.Instance.Token);
+                    var lang = await Access.Notes.Controllers.Notes.ReadLang(response.LastId, SessionManager.Instance.Default.Token);
 
                     newModel.Language = lang.Model;
 
@@ -328,7 +329,7 @@ public partial class Home : IDisposable
                 Tittle = note.Tittle,
                 Content = note.Content,
                 Color = note.Color
-            }, Session.Instance.Token);
+            }, SessionManager.Instance.Default.Token);
 
 
             // Obtener la nota local.
@@ -475,7 +476,7 @@ public partial class Home : IDisposable
     {
 
         // Iniciar sesión.
-        var (_, response) = await LIN.Access.Notes.Session.LoginWith(user, password, true);
+        var response = await LIN.Access.Notes.SessionManager.Instance.Default.LoginWith(user, password, true);
 
         switch (response)
         {
