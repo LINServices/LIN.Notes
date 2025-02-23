@@ -42,13 +42,19 @@ public partial class Home : IDisposable
     }
 
 
-
     /// <summary>
     /// Al actualizar la sesión.
     /// </summary>
     /// <param name="e">Session.</param>
     private void OnUpdateSession(object? sender, Session e)
     {
+        if (!e.IsLocalOpen)
+        {
+            e.CloseSession();
+            NavigationManager.NavigateTo("/login");
+            return;
+        }
+
         if (e.Type == SessionType.Connected)
             InvokeAsync(() => RefreshData(true));
 
@@ -424,6 +430,37 @@ public partial class Home : IDisposable
                 Tittle = md.Tittle
             });
 
+
+        });
+
+    }
+
+
+    public async void Add(NoteDataModel model)
+    {
+        await this.InvokeAsync(async () =>
+        {
+
+            var exist = Notes.Value.Models.Exists(t => t.Id == model.Id);
+
+            if (exist)
+                return;
+
+            Notes.Value.Models.Add(model);
+            StateHasChanged();
+
+            // Base de datos local.
+            var noteDB = new LocalDataBase.Data.NoteDB();
+
+
+            await noteDB.Save(new LocalDataBase.Models.Note()
+            {
+                Color = model.Color,
+                Content = model.Content,
+                Id = model.Id,
+                IsConfirmed = true,
+                Tittle = model.Tittle
+            });
 
         });
 

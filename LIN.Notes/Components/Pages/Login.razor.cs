@@ -102,7 +102,7 @@ public partial class Login
                     Unique = localSession.Unique
                 },
                 Id = localSession.Id
-            }, (accessType == NetworkAccess.Internet ? SessionType.Sync : SessionType.Local));
+            }, accessType == NetworkAccess.Internet ? SessionType.Sync : SessionType.Local);
 
             SessionManager.Instance.SetDefault(SessionManager.Instance.Sessions[0]);
 
@@ -175,12 +175,17 @@ public partial class Login
     /// </summary>
     void ShowError(string message)
     {
-        InvokeAsync(() =>
+        InvokeAsync(async () =>
         {
+            // Borrar las credenciales.
+            LocalDataBase.Data.UserDB database = new();
+            await database.DeleteUsers();
+
             UpdateSection(0);
             ErrorVisible = true;
             ErrorMessage = message;
             StateHasChanged();
+            NavigationManager.NavigateTo("/");
         });
     }
 
@@ -232,8 +237,9 @@ public partial class Login
         }
         else
         {
-            response = await session.LoginWith(User, Password, safe: true);
+            response = await session.LoginWith(User, Password, safe: false);
         }
+        Home.HaveAuthError = true;
 
         // Validar respuesta.
         switch (response)
@@ -241,7 +247,7 @@ public partial class Login
 
             // Correcto.
             case Responses.Success:
-
+                Home.HaveAuthError = false;
                 // Iniciar servicios de tiempo real.
                 Services.Realtime.Start();
 
@@ -264,7 +270,6 @@ public partial class Login
             // Contraseña incorrecta.
             case Responses.InvalidPassword:
 
-                Home.HaveAuthError = true;
                 ShowError("La contraseña es incorrecta");
                 break;
 
@@ -281,8 +286,6 @@ public partial class Login
             default:
                 ShowError("Inténtalo mas tarde");
                 break;
-
-
         }
 
     }

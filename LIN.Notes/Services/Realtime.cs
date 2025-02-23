@@ -122,6 +122,38 @@ internal class Realtime
             ]
         };
 
+
+        // Función de actualizar contactos.
+        SILFFunction add = new(async (values) =>
+        {
+            // Obtener el parámetro.
+            var value = values.FirstOrDefault(t => t.Name == "id")?.Objeto.GetValue();
+
+            // Validar el tipo.
+            if (value is not decimal)
+                return;
+
+            // Id.
+            int id = (int)((value as decimal?) ?? 0);
+
+
+            var x = await LIN.Access.Notes.Controllers.Notes.Read(id, SessionManager.Instance.Default.Token);
+
+            if (x.Response != Responses.Success)
+                return;
+
+            Home.Instance.Add(x.Model);
+
+        })
+        // Propiedades
+        {
+            Name = "add",
+            Parameters =
+            [
+                new("id", new("number"))
+            ]
+        };
+
         // Eliminar
         SILFFunction remove = new(async (values) =>
         {
@@ -149,7 +181,7 @@ internal class Realtime
             ]
         };
 
-        Actions = [updateColor, remove, update];
+        Actions = [updateColor, remove, update, add];
 
     }
 
