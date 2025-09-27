@@ -94,10 +94,19 @@
                 @* Renderizar notas. *@
                 else
                 {
-                    @* Control de notas. *@
-                    @foreach (var e in Notes.Value.Models.Where(t => t.Color == Color || Color == -1))
+                    if (Notes.Value.Models.Where(t=>t.Color == Color || Color == -1).Count() == 0)
                     {
-                        <NoteControl Note="e" OnClick="Go" />
+                        <div class="col-span-full mt-3 flex w-full items-center justify-center rounded-lg border-2 border-dashed border-gray-300 py-10 dark:border-zinc-600">
+                            <label class="text-gray-400 dark:text-zinc-400">No tienes ninguna nota</label>
+                        </div>
+                    }
+                    else
+                    {
+                        @* Control de notas. *@
+                        @foreach (var e in Notes.Value.Models.Where(t => t.Color == Color || Color == -1))
+                        {
+                            <NoteControl Note="e" OnClick="Go" />
+                        }
                     }
                 }
             }
